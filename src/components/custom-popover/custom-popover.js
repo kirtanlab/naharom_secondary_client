@@ -42,7 +42,7 @@ export default function CustomPopover({
       }}
       {...other}
     >
-      {!hiddenArrow && <StyledArrow arrow={arrow} />}
+      {!hiddenArrow && <StyledArrow sx={{ backgroundColor: '#e4e6ed' }} arrow={arrow} />}
 
       {children}
     </Popover>

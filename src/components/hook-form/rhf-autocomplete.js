@@ -6,7 +6,14 @@ import Autocomplete from '@mui/material/Autocomplete';
 
 // ----------------------------------------------------------------------
 
-export default function RHFAutocomplete({ name, label, placeholder, helperText, ...other }) {
+export default function RHFAutocomplete({
+  disabled,
+  name,
+  label,
+  placeholder,
+  helperText,
+  ...other
+}) {
   const { control, setValue } = useFormContext();
 
   return (
@@ -16,6 +23,7 @@ export default function RHFAutocomplete({ name, label, placeholder, helperText, 
       render={({ field, fieldState: { error } }) => (
         <Autocomplete
           {...field}
+          disabled={disabled}
           onChange={(event, newValue) => setValue(name, newValue, { shouldValidate: true })}
           renderInput={(params) => (
             <TextField
@@ -38,4 +46,5 @@ RHFAutocomplete.propTypes = {
   label: PropTypes.string,
   name: PropTypes.string,
   placeholder: PropTypes.string,
+  disabled: PropTypes.bool,
 };

@@ -9,48 +9,64 @@ import Stack from '@mui/material/Stack';
 import CheckOutlinedIcon from '@mui/icons-material/CheckOutlined';
 import useMediaQuery from '@mui/material/useMediaQuery';
 // components
+import { paths } from 'src/routes/paths';
 import { useSettingsContext } from 'src/components/settings';
 import KeyboardDoubleArrowRightIcon from '@mui/icons-material/KeyboardDoubleArrowRight';
+import StorefrontIcon from '@mui/icons-material/Storefront';
+import WalletIcon from '@mui/icons-material/Wallet';
 import { Button } from '@mui/material';
+import { useRouter } from 'src/routes/hooks';
 // ----------------------------------------------------------------------
 
 export default function OneView() {
   const settings = useSettingsContext();
   const theme = useTheme();
+  const router = useRouter();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
-  const COLORS = ['inherit', 'primary', 'secondary', 'info', 'success', 'warning', 'error'];
   const completionBooleans = [
     {
       label: 'Complete the registration',
       value: true,
       continue: false,
+      name: 'register',
     },
     {
       label: 'Complete the user profile',
-      value: true,
-      continue: false,
+      value: false /** whether the filled or not */,
+      continue: true /** whether to show continue button */,
+      name: 'profile',
     },
     {
       label: 'Bank account',
       value: false,
       continue: true,
       warning: 'Please fill your user profile',
+      name: 'bank',
     },
     {
       label: 'PAN No.',
       value: false,
       continue: true,
       warning: 'Please fill your user profile',
+      name: 'pan',
     },
     {
       label: 'Add Funds',
       value: false,
       continue: false,
       warning: 'Please fill your bank account details',
+      name: 'fund',
     },
   ];
 
+  const routes = {
+    profile: 'profile',
+    company: 'company',
+    bank: 'bank',
+    pan: 'pan',
+    password: 'password',
+  };
   return (
     <Container maxWidth={settings.themeStretch ? false : 'xl'}>
       <Box
@@ -58,7 +74,7 @@ export default function OneView() {
           mt: 5,
           width: 1,
           height: 'auto',
-          padding: 2,
+          padding: 3,
           borderRadius: 2,
           textAlign: 'center',
           boxShadow: theme.customShadows.z8,
@@ -67,7 +83,7 @@ export default function OneView() {
         }}
       >
         <Stack spacing={1}>
-          <Typography variant="h4" sx={{ alignSelf: 'start' }}>
+          <Typography variant="h5" sx={{ alignSelf: 'start' }}>
             Complete Your Profile
           </Typography>
           <LinearProgress
@@ -144,7 +160,9 @@ export default function OneView() {
                             color: theme.palette.primary.main,
                           },
                         }}
-                        onClick={() => alert('Woww')}
+                        onClick={() =>
+                          router.push(`${paths.dashboard.three}?init=${routes[card.name]}`)
+                        }
                       >
                         <Typography
                           variant="body2"
@@ -200,6 +218,102 @@ export default function OneView() {
               </Card>
             ))}
           </Stack>
+        </Stack>
+      </Box>
+      <Box
+        sx={{
+          mt: 10,
+          width: 1,
+          height: 'auto',
+          // padding: 1,
+          borderRadius: 2,
+          textAlign: 'center',
+          // boxShadow: theme.customShadows.z8,
+          // bgcolor: alpha(theme.palette.grey[500], 0.04),
+          // border: `dashed 1px ${theme.palette.divider}`,
+        }}
+      >
+        <Stack
+          direction={isMobile ? 'column' : 'row'}
+          spacing={isMobile ? 2 : 5}
+          alignItems="center"
+          justifyContent="space-between"
+        >
+          <Card
+            // key={index}
+            sx={{
+              height: 180,
+              width: '100%',
+              position: 'relative', // Added for absolute positioning of "Continue" text
+              justifyContent: 'center',
+              alignItems: 'center',
+              borderRadius: 1.5,
+              padding: 1,
+            }}
+          >
+            <WalletIcon
+              sx={{
+                borderRadius: 10,
+                height: 40,
+                width: 40,
+                padding: 1,
+                // backgroundColor: card.value
+                //   ? theme.palette.success.main
+                //   : theme.palette.grey.A100,
+                // color: card.value ? theme.palette.common.white : theme.palette.text.disabled,
+              }}
+            />
+          </Card>
+          <Card
+            // key={index}
+            sx={{
+              height: 180,
+              width: '100%',
+              position: 'relative', // Added for absolute positioning of "Continue" text
+              justifyContent: 'center',
+              alignItems: 'center',
+              borderRadius: 1.5,
+              padding: 1,
+            }}
+          >
+            <WalletIcon
+              sx={{
+                borderRadius: 10,
+                height: 40,
+                width: 40,
+                padding: 1,
+                // backgroundColor: card.value
+                //   ? theme.palette.success.main
+                //   : theme.palette.grey.A100,
+                // color: card.value ? theme.palette.common.white : theme.palette.text.disabled,
+              }}
+            />
+          </Card>
+          <Card
+            // key={index}
+            sx={{
+              height: 180,
+              width: '100%',
+              position: 'relative', // Added for absolute positioning of "Continue" text
+              justifyContent: 'center',
+              alignItems: 'center',
+              borderRadius: 1.5,
+              padding: 1,
+            }}
+          >
+            <WalletIcon
+              sx={{
+                borderRadius: 10,
+                height: 40,
+                width: 40,
+                padding: 1,
+                // backgroundColor: card.value
+                //   ? theme.palette.success.main
+                //   : theme.palette.grey.A100,
+                // color: card.value ? theme.palette.common.white : theme.palette.text.disabled,
+              }}
+            />
+          </Card>
         </Stack>
       </Box>
     </Container>

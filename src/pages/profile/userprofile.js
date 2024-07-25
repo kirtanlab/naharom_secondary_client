@@ -1,5 +1,5 @@
 import { Helmet } from 'react-helmet-async';
-import UserForm from 'src/sections/profile/user-profile';
+import UserForm from 'src/sections/profile-auth/user-profile';
 // sections
 
 // ----------------------------------------------------------------------

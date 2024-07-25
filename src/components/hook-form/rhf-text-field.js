@@ -16,6 +16,8 @@ export default function RHFTextField({ name, helperText, type, ...other }) {
         <TextField
           {...field}
           fullWidth
+          // variant="standard"
+          // color="primary"
           type={type}
           value={type === 'number' && field.value === 0 ? '' : field.value}
           onChange={(event) => {

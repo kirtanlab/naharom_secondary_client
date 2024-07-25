@@ -1,6 +1,6 @@
 import { Helmet } from 'react-helmet-async';
+import ContractMgtView from 'src/sections/ContractMgt/view';
 // sections
-import SixView from 'src/sections/six/view';
 
 // ----------------------------------------------------------------------
 
@@ -8,10 +8,10 @@ export default function Page() {
   return (
     <>
       <Helmet>
-        <title> Dashboard: Six</title>
+        <title>Contracts</title>
       </Helmet>
 
-      <SixView />
+      <ContractMgtView />
     </>
   );
 }
