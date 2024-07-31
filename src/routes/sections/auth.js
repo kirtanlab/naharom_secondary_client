@@ -13,7 +13,7 @@ import { SplashScreen } from 'src/components/loading-screen';
 const JwtLoginPage = lazy(() => import('src/pages/auth/jwt/login'));
 const JwtRegisterPage = lazy(() => import('src/pages/auth/jwt/register'));
 const JwtOnboard = lazy(() => import('src/pages/auth/jwt/onboard'));
-
+const JwtOTP = lazy(() => import('src/pages/auth/jwt/otp'));
 // ----------------------------------------------------------------------
 
 const authJwt = {
@@ -35,6 +35,14 @@ const authJwt = {
       ),
     },
     {
+      path: 'otp',
+      element: (
+        <AuthClassicLayout>
+          <JwtOTP />
+        </AuthClassicLayout>
+      ),
+    },
+    {
       path: 'login',
       element: (
         <AuthClassicLayout>
@@ -42,6 +50,7 @@ const authJwt = {
         </AuthClassicLayout>
       ),
     },
+
     {
       path: 'register',
       element: (

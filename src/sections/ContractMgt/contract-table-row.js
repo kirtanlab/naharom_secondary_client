@@ -4,6 +4,10 @@ import Iconify from 'src/components/iconify';
 import CustomPopover from 'src/components/custom-popover/custom-popover';
 import CustomDialog from 'src/components/Dialog/dialog';
 import { useState } from 'react';
+import { ConfirmDialog } from 'src/components/custom-dialog';
+import { LoadingButton } from '@mui/lab';
+//
+
 import FractionalizeModel from './fractionalise-model';
 //
 const { useTheme } = require('@emotion/react');
@@ -20,11 +24,12 @@ const {
 } = require('@mui/material');
 const { usePopover } = require('src/components/custom-popover');
 const { useBoolean } = require('src/hooks/use-boolean');
+
 //
 
 const ContractTableRow = ({ row, selected, onSelectRow, table, confirm }) => {
   const popover = usePopover();
-
+  const WithdrawConfirm = useBoolean();
   const [FractionalModel, setFractionalModel] = useState(false);
   console.log('row: ', row);
   return (
@@ -136,12 +141,41 @@ const ContractTableRow = ({ row, selected, onSelectRow, table, confirm }) => {
           <Iconify icon="solar:eye-bold" />
           Post for Sale
         </MenuItem>
+        <MenuItem
+          onClick={() => {
+            WithdrawConfirm.onTrue();
+            popover.onClose();
+          }}
+        >
+          <Iconify icon="solar:eye-bold" />
+          Withdraw Sale
+        </MenuItem>
       </CustomPopover>
       <CustomDialog
         openFlag={FractionalModel}
         setonClose={() => setFractionalModel(false)}
         placeHolder="Post For Sale"
         component={<FractionalizeModel row={row} />}
+      />
+      <ConfirmDialog
+        open={WithdrawConfirm.value}
+        onClose={WithdrawConfirm.onFalse}
+        title="Withdraw"
+        content={<>Are you sure want to withdraw this sale?</>}
+        action={
+          <LoadingButton
+            variant="contained"
+            color="error"
+            onClick={async () => {
+              // await HandoverMutation(row?.id);
+              WithdrawConfirm.onFalse();
+            }}
+            // disabled={HandoverIsSuccess}
+            // loading={HandoverIsLoading}
+          >
+            Withdraw
+          </LoadingButton>
+        }
       />
     </TableRow>
   );

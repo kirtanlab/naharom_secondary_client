@@ -1,6 +1,6 @@
 import * as Yup from 'yup';
 import React, { useEffect, useState } from 'react';
-import { useForm } from 'react-hook-form';
+import { Controller, useForm } from 'react-hook-form';
 
 import { yupResolver } from '@hookform/resolvers/yup';
 // @mui
@@ -24,21 +24,38 @@ import { useAuthContext } from 'src/auth/hooks';
 // components
 import Iconify from 'src/components/iconify';
 import FormProvider, { RHFTextField } from 'src/components/hook-form';
-import { FormControlLabel, Radio, FormControl, FormLabel, RadioGroup, Button } from '@mui/material';
+import {
+  FormControlLabel,
+  Radio,
+  FormControl,
+  FormLabel,
+  RadioGroup,
+  Button,
+  TextField,
+  Box,
+} from '@mui/material';
 import { LoginButton } from 'src/layouts/_common';
+import { useNavigate } from 'react-router';
+import { LoadingScreen } from 'src/components/loading-screen';
+import { useGenerateOTP } from 'src/queries/auth';
+import { useSnackbar } from 'notistack';
+//
+import LoginForm from './login-form';
 
 // ----------------------------------------------------------------------
 
 export default function JwtOnboard() {
   const { login } = useAuthContext();
-
+  const navigate = useNavigate();
+  const loading = true;
   const router = useRouter();
+  const { enqueueSnackbar } = useSnackbar();
   const [searchParams, setSearchParams] = useSearchParams();
   const returnTo = searchParams.get('returnTo') || '/dashboard';
   const [selectedValue, setSelectedValue] = useState(searchParams.get('selected') || 'individual');
   const [errorMsg, setErrorMsg] = useState('');
   // const [selectedValue, setSelectedValue] = React.useState('individual');
-
+  const generateOTP = useGenerateOTP();
   useEffect(() => {
     setSearchParams({
       returnTo,
@@ -50,97 +67,166 @@ export default function JwtOnboard() {
     setSelectedValue(event.target.value);
   };
 
-  const password = useBoolean();
-
   const LoginSchema = Yup.object().shape({
-    email: Yup.string().required('Email is required').email('Email must be a valid email address'),
-    password: Yup.string().required('Password is required'),
+    userType: Yup.string(),
+    mobileNumber: Yup.string()
+      .required('Mobile Number is Required')
+      .matches(/^[0-9]{10}$/, 'Must be exactly 10 digits'),
   });
 
   const defaultValues = {
-    email: 'demo@minimals.cc',
-    password: 'demo1234',
+    userType: 'individual',
+    mobileNumber: '',
   };
 
   const methods = useForm({
     resolver: yupResolver(LoginSchema),
     defaultValues,
   });
-
   const {
+    control,
     reset,
     handleSubmit,
     formState: { isSubmitting },
   } = methods;
 
-  const onSubmit = handleSubmit(async (data) => {
+  // const onSubmit = handleSubmit(async (data) => {
+  //   try {
+  //     setSearchParams({ returnTo, selected: selectedValue });
+  //     router.push(`${paths.auth.jwt.otp}?returnTo=${returnTo}&selectedValue=${selectedValue}`);
+  //     console.log('Selected value:', selectedValue);
+  //   } catch (error) {
+  //     console.error(error);
+  //     reset();
+  //     setErrorMsg(typeof error === 'string' ? error : error.message);
+  //   }
+  // });
+  if (generateOTP.status === 'loading') {
+    return <LoadingScreen />;
+  }
+
+  const onSubmit = async (data) => {
     try {
-      setSearchParams({ returnTo, selected: selectedValue });
-      router.push(`${paths.auth.jwt.login}?returnTo=${returnTo}&selectedValue=${selectedValue}`);
-      console.log('Selected value:', selectedValue);
-    } catch (error) {
-      console.error(error);
-      reset();
-      setErrorMsg(typeof error === 'string' ? error : error.message);
+      console.log('Form submitted:', data);
+      const final_data = {
+        countryCode: '91',
+        mobileNumber: data.mobileNumber,
+      };
+      const res_data = await generateOTP.mutateAsync(final_data);
+      // const res_data = {
+      //   results: {
+      //     refId: 'www',
+      //   },
+      // };
+      console.log('data after generateOTP:', res_data);
+      if (generateOTP.isSuccess) {
+        enqueueSnackbar(`OTP sent on ${data.mobileNumber}!`, {
+          variant: 'success',
+          color: 'success',
+          anchorOrigin: { vertical: 'top', horizontal: 'center' },
+        });
+        navigate(`${paths.auth.jwt.otp}`, {
+          state: {
+            loginType: data.loginType,
+            mobileNumber: data.mobileNumber,
+            refId: res_data.results.referenceId,
+          },
+        });
+      }
+    } catch {
+      console.log('genereateOTP error; ', generateOTP?.failureReason?.response?.data?.message);
+      enqueueSnackbar(
+        generateOTP?.failureReason?.response?.data?.message
+          ? generateOTP?.failureReason?.response?.data?.message
+          : "Can't generate OTP at this time",
+        {
+          variant: 'error',
+          color: 'error',
+          anchorOrigin: { vertical: 'top', horizontal: 'center' },
+        }
+      );
+      // alert('Check your internet connectivity');
+      console.log('error in handleSubmit of GenerateOTP');
+      console.log('error: ', generateOTP.error);
     }
-  });
 
-  const renderHead = (
-    <Stack spacing={2} sx={{ mb: 5 }}>
-      <Typography variant="h3">Welcome</Typography>
+    // Here you can add logic to proceed to the next step or send data to your backend
+  };
 
-      {/* <Stack direction="row" spacing={0.5}>
-        <Typography variant="body2">New user?</Typography>
+  // const renderHead = (
+  //   <Stack spacing={2} sx={{ mb: 5 }}>
+  //     <Typography variant="h3">Welcome</Typography>
 
-        <Link component={RouterLink} href={paths.auth.jwt.register} variant="subtitle2">
-          Create an account
-        </Link>
-      </Stack> */}
-    </Stack>
-  );
+  //     {/* <Stack direction="row" spacing={0.5}>
+  //       <Typography variant="body2">New user?</Typography>
 
-  const renderSelection = (
-    <Stack spacing={2.5}>
-      <FormControl component="fieldset">
-        <Typography
-          sx={{
-            fontSize: 18,
-            marginBottom: '16px',
-          }}
-        >
-          Login/ Register as
-        </Typography>
-        <RadioGroup name="radio-buttons" value={selectedValue} onChange={handleChange}>
-          <FormControlLabel
-            value="individual"
-            control={<Radio size="medium" />}
-            sx={{ marginTop: 2 }}
-            label={<Typography sx={{ fontSize: 16 }}>Individual</Typography>}
-          />
-          <FormControlLabel
-            value="company"
-            control={<Radio size="medium" />}
-            sx={{ marginTop: 2 }}
-            label={<Typography sx={{ fontSize: 16 }}>Company</Typography>}
-          />
-        </RadioGroup>
-        <Button
-          variant="contained"
-          color="inherit"
-          type="submit"
-          // onClick={handleSubmit}
-          sx={{ marginTop: 5, width: '40%' }}
-        >
-          <Typography sx={{ fontSize: 16 }}>Next</Typography>
-        </Button>
-      </FormControl>
-    </Stack>
-  );
+  //       <Link component={RouterLink} href={paths.auth.jwt.register} variant="subtitle2">
+  //         Create an account
+  //       </Link>
+  //     </Stack> */}
+  //   </Stack>
+  // );
+
+  // const renderSelection = (
+  //   <Stack spacing={2.5}>
+  //     <FormControl component="fieldset">
+  //       <Typography
+  //         sx={{
+  //           fontSize: 18,
+  //           marginBottom: '16px',
+  //         }}
+  //       >
+  //         Login/ Register as
+  //       </Typography>
+  //       <RadioGroup name="radio-buttons" value={selectedValue} onChange={handleChange}>
+  //         <FormControlLabel
+  //           value="individual"
+  //           control={<Radio size="medium" />}
+  //           sx={{ marginTop: 2 }}
+  //           label={<Typography sx={{ fontSize: 16 }}>Individual</Typography>}
+  //         />
+  //         <FormControlLabel
+  //           value="company"
+  //           control={<Radio size="medium" />}
+  //           sx={{ marginTop: 2 }}
+  //           label={<Typography sx={{ fontSize: 16 }}>Company</Typography>}
+  //         />
+  //       </RadioGroup>
+  //       <Stack spacing={2.5} sx={{ mt: 2, mb: 2 }}>
+  //         <Typography variant="subtitle1">Enter your mobile number</Typography>
+  //         <Controller
+  //           name="mobileNumber"
+  //           control={control}
+  //           render={({ field, fieldState: { error } }) => (
+  //             <TextField
+  //               {...field}
+  //               fullWidth
+  //               error={!!error}
+  //               helperText={error?.message}
+  //               InputProps={{
+  //                 startAdornment: <InputAdornment position="start">+91</InputAdornment>,
+  //               }}
+  //               placeholder="Enter 10 digit mobile number"
+  //             />
+  //           )}
+  //         />
+  //       </Stack>
+  //       <Button
+  //         variant="contained"
+  //         color="inherit"
+  //         type="submit"
+  //         // onClick={handleSubmit}
+  //         sx={{ marginTop: 5, width: '40%' }}
+  //       >
+  //         <Typography sx={{ fontSize: 16 }}>Next</Typography>
+  //       </Button>
+  //     </FormControl>
+  //   </Stack>
+  // );
 
   return (
-    <FormProvider methods={methods} onSubmit={onSubmit}>
-      {renderHead}
-      {renderSelection}
-    </FormProvider>
+    <Box sx={{ maxWidth: 400, margin: 'auto', mt: 4 }}>
+      <LoginForm onSubmit={onSubmit} />
+    </Box>
   );
 }

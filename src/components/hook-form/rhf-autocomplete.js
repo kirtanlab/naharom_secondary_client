@@ -12,6 +12,7 @@ export default function RHFAutocomplete({
   label,
   placeholder,
   helperText,
+  defaultValue,
   ...other
 }) {
   const { control, setValue } = useFormContext();
@@ -23,6 +24,7 @@ export default function RHFAutocomplete({
       render={({ field, fieldState: { error } }) => (
         <Autocomplete
           {...field}
+          defaultValue={defaultValue}
           disabled={disabled}
           onChange={(event, newValue) => setValue(name, newValue, { shouldValidate: true })}
           renderInput={(params) => (
@@ -47,4 +49,5 @@ RHFAutocomplete.propTypes = {
   name: PropTypes.string,
   placeholder: PropTypes.string,
   disabled: PropTypes.bool,
+  defaultValue: PropTypes.string,
 };

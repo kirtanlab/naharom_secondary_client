@@ -1,11 +1,12 @@
 import * as Yup from 'yup';
 import PropTypes from 'prop-types';
 import { LoadingButton } from '@mui/lab';
-import { Box, Card, Checkbox, FormControlLabel, Grid, Stack } from '@mui/material';
+import { Box, Card, Checkbox, FormControlLabel, Grid, Stack, Typography } from '@mui/material';
 import { RHFAutocomplete, RHFTextField } from 'src/components/hook-form';
 import FormProvider from 'src/components/hook-form/form-provider';
 import { DatePicker } from '@mui/x-date-pickers';
 import { fDate } from 'src/utils/format-time';
+import { useResponsive } from 'src/hooks/use-responsive';
 //
 const { yupResolver } = require('@hookform/resolvers/yup');
 const { useMemo } = require('react');
@@ -38,7 +39,10 @@ function FractionalizeModel({ row }) {
   const currentDate = new Date();
   const tenureInDays = row?.tenure_in_days ?? 1; // Default to 1 if undefined
   const default_to_date = new Date(currentDate.getTime() + tenureInDays * 24 * 60 * 60 * 1000);
-
+  const incremented_to_date = new Date(currentDate.getTime() + 24 * 60 * 60 * 1000);
+  const mdUp = useResponsive('up', 'md');
+  const lgUp = useResponsive('up', 'lg');
+  const ismdlgUP = mdUp || lgUp;
   return (
     <FormProvider methods={methods} onSubmit={onSubmit}>
       <Grid xs={12} md={10}>
@@ -60,6 +64,7 @@ function FractionalizeModel({ row }) {
               name="type_of_sale"
               label="Type of sale"
               disabled
+              defaultValue="Fixed Price Sale"
               options={['fixed_price_sale', 'bid_based_auction']}
               getOptionLabel={(option) => option}
               isOptionEqualToValue={(option, value) => option === value}
@@ -90,6 +95,7 @@ function FractionalizeModel({ row }) {
                     }}
                     defaultValue={new Date()}
                     minDate={new Date()}
+                    maxDate={default_to_date}
                     slotProps={{
                       textField: {
                         fullWidth: true,
@@ -113,7 +119,8 @@ function FractionalizeModel({ row }) {
                       field.onChange(newValue);
                     }}
                     defaultValue={default_to_date}
-                    minDate={new Date()}
+                    minDate={incremented_to_date}
+                    maxDate={default_to_date}
                     slotProps={{
                       textField: {
                         fullWidth: true,
@@ -125,6 +132,9 @@ function FractionalizeModel({ row }) {
                 );
               }}
             />
+            {ismdlgUP && <Box />}
+          </Box>
+          <Box sx={{ mt: 2, ml: 1 }}>
             <Controller
               name="agree_to_terms"
               control={control}
@@ -142,12 +152,13 @@ function FractionalizeModel({ row }) {
                         inputProps={{ 'aria-label': 'controlled' }}
                       />
                     }
-                    label="I agree to the terms and conditions"
+                    label={<Typography>I agree to terms and conditions</Typography>}
                   />
                 );
               }}
             />
           </Box>
+
           <Stack justifyContent="space-between" sx={{ mt: 3 }} direction="row">
             <LoadingButton variant="contained">Reset</LoadingButton>
 

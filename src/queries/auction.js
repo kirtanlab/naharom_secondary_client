@@ -1,5 +1,6 @@
 import axios from 'axios';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { getSession } from 'src/auth/context/jwt/utils';
 import { HOST_ADDRESS } from './host';
 //
 export async function getAllInvoicesById({ queryKey }) {
@@ -12,9 +13,9 @@ export async function getAllInvoicesById({ queryKey }) {
 export const useGetAllInvoicesById = () => {
   // const { user } = useAuth();
   // console.log('user: ', user);
-  const id = 2;
+  const { userId } = getSession();
   // user?.id
-  return useQuery(['AllInvoices', id], getAllInvoicesById, {
+  return useQuery(['AllInvoices', userId], getAllInvoicesById, {
     retry: 1,
     refetchOnReconnect: 'always',
     refetchInterval: 1000 * 60 * 1,

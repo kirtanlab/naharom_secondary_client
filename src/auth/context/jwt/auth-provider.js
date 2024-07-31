@@ -4,7 +4,7 @@ import { useEffect, useReducer, useCallback, useMemo } from 'react';
 import axios, { endpoints } from 'src/utils/axios';
 //
 import { AuthContext } from './auth-context';
-import { isValidToken, setSession } from './utils';
+import { getSession, isValidToken, setSession } from './utils';
 
 // ----------------------------------------------------------------------
 
@@ -56,10 +56,11 @@ export function AuthProvider({ children }) {
 
   const initialize = useCallback(async () => {
     try {
-      const accessToken = sessionStorage.getItem(STORAGE_KEY);
+      const { accessToken, userId } = getSession();
+      console.log('isvalidtoken: ', accessToken, userId);
 
       if (accessToken && isValidToken(accessToken)) {
-        setSession(accessToken);
+        setSession({ accessToken, userId: 1 });
 
         const response = await axios.get(endpoints.auth.me);
 
@@ -105,7 +106,7 @@ export function AuthProvider({ children }) {
 
     const { accessToken, user } = response.data;
 
-    setSession(accessToken);
+    setSession({ accessToken, userId: 2 });
 
     dispatch({
       type: 'LOGIN',
@@ -128,7 +129,7 @@ export function AuthProvider({ children }) {
 
     const { accessToken, user } = response.data;
 
-    sessionStorage.setItem(STORAGE_KEY, accessToken);
+    localStorage.setItem(STORAGE_KEY, accessToken);
 
     dispatch({
       type: 'REGISTER',
@@ -140,7 +141,7 @@ export function AuthProvider({ children }) {
 
   // LOGOUT
   const logout = useCallback(async () => {
-    setSession(null);
+    setSession({ accessToken: null, userId: null });
     dispatch({
       type: 'LOGOUT',
     });
@@ -149,7 +150,7 @@ export function AuthProvider({ children }) {
   // ----------------------------------------------------------------------
 
   const checkAuthenticated = state.user ? 'authenticated' : 'unauthenticated';
-
+  console.log('Checking user: ', checkAuthenticated);
   const status = state.loading ? 'loading' : checkAuthenticated;
 
   const memoizedValue = useMemo(

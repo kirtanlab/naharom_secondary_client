@@ -4,6 +4,7 @@ import Iconify from 'src/components/iconify';
 import CustomPopover from 'src/components/custom-popover/custom-popover';
 import CustomDialog from 'src/components/Dialog/dialog';
 import { useState } from 'react';
+import { getSession } from 'src/auth/context/jwt/utils';
 //
 const { useTheme } = require('@emotion/react');
 const {
@@ -23,6 +24,33 @@ const { useBoolean } = require('src/hooks/use-boolean');
 
 const UserTableRow = ({ row, selected, onSelectRow, table, confirm }) => {
   const popover = usePopover();
+  const { accessToken } = getSession();
+  async function handleImpersonate(userId) {
+    if (!userId) {
+      alert('Something went wrong');
+      return;
+    }
+    const newTab = window.open('about:blank', '_blank');
+    console.log('setting UserId: ', row?.user_id, accessToken);
+    newTab.document.write(`
+    <html>
+      <head>
+        <title>Impersonation</title>
+      </head>
+      <body>
+        <h1>Logging in as impersonated user...</h1>
+        <script>
+        sessionStorage.setItem('isImpersonate', '${true}');
+          sessionStorage.setItem('accessToken', '${accessToken}');
+          sessionStorage.setItem('userId', '${row?.user_id}');
+        window.location.href = '/dashboard?impersonation=true';
+        </script>
+      </body>
+    </html>
+  `);
+    newTab.document.close();
+  }
+  //
   return (
     <TableRow hover selected={selected}>
       <TableCell>
@@ -104,7 +132,7 @@ const UserTableRow = ({ row, selected, onSelectRow, table, confirm }) => {
       </TableCell>
       <TableCell>
         <ListItemText
-          onClick={() => alert('woww')}
+          onClick={() => handleImpersonate(row?.user_id)}
           primary="Impersonate"
           primaryTypographyProps={{
             typography: 'subtitle',

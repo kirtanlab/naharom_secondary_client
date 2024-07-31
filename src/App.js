@@ -67,11 +67,13 @@ export default function App() {
           >
             <ThemeProvider>
               <MotionLazy>
-                <SettingsDrawer />
-                <ProgressBar />
-                <AuthConsumer>
-                  <Router />
-                </AuthConsumer>
+                <SnackbarProvider>
+                  <SettingsDrawer />
+                  <ProgressBar />
+                  <AuthConsumer>
+                    <Router />
+                  </AuthConsumer>
+                </SnackbarProvider>
               </MotionLazy>
             </ThemeProvider>
           </SettingsProvider>

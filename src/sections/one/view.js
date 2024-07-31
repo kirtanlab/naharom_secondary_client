@@ -16,6 +16,8 @@ import StorefrontIcon from '@mui/icons-material/Storefront';
 import WalletIcon from '@mui/icons-material/Wallet';
 import { Button } from '@mui/material';
 import { useRouter } from 'src/routes/hooks';
+import { useLocation } from 'react-router';
+import { getSession, setSession } from 'src/auth/context/jwt/utils';
 // ----------------------------------------------------------------------
 
 export default function OneView() {
@@ -23,7 +25,20 @@ export default function OneView() {
   const theme = useTheme();
   const router = useRouter();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+  const location = useLocation();
+  const { accessToken, userId } = getSession();
+  console.log('userId', userId);
+  // useEffect(() => {
+  //   const params = new URLSearchParams(location.search);
+  //   const userId = sessionStorage.getItem('userId');
+  //   const isImpersonation = params.get('impersonation');
 
+  //   if (isImpersonation === 'true') {
+  //     setSession({accessToken:  })
+  //   }
+  // }, [location]);
+
+  // console.log('userId:', userId);
   const completionBooleans = [
     {
       label: 'Complete the registration',
