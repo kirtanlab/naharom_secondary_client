@@ -16,3 +16,7 @@ export const useVerifyOTP = () => {
   const mutation = useMutation(verifyOTP);
   return mutation;
 };
+
+export const getStatus = async (userId) => {
+  return await axios.get(`${HOST_ADDRESS}/verifyStatus/${userId}`).then((res) => res.data);
+};

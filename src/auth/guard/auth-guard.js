@@ -17,7 +17,7 @@ const loginPaths = {
 export default function AuthGuard({ children }) {
   const router = useRouter();
 
-  const { authenticated, method } = useAuthContext();
+  const { authenticated, isKYC, isBank, method } = useAuthContext();
 
   const [checked, setChecked] = useState(false);
 
@@ -32,6 +32,8 @@ export default function AuthGuard({ children }) {
       const href = `${loginPath}?${searchParams}`;
 
       router.replace(href);
+    } else if (authenticated && !isKYC) {
+      router.replace(paths.profile.user);
     } else {
       setChecked(true);
     }

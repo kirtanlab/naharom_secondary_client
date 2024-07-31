@@ -5,17 +5,22 @@ import axios, { endpoints } from 'src/utils/axios';
 //
 import { AuthContext } from './auth-context';
 import { getSession, setImpersonateSession, setLocalSession } from './utils';
+import { getStatus } from 'src/queries/auth';
 
 const initialState = {
   user: null,
   loading: true,
+  isKYC: false,
+  isBank: false,
 };
 
 const reducer = (state, action) => {
   if (action.type === 'INITIAL') {
     return {
       loading: false,
-      user: action.payload.user,
+      user: action.payload.userId,
+      isKYC: action.payload.isKYC,
+      isBank: action.payload.isBank,
     };
   }
   if (action.type === 'LOGIN') {
@@ -34,6 +39,8 @@ const reducer = (state, action) => {
     return {
       ...state,
       user: null,
+      isKYC: false,
+      isBank: false,
     };
   }
   return state;
@@ -52,11 +59,15 @@ export function AuthProvider({ children }) {
       console.log(userId);
 
       if (userId) {
+        const response = await getStatus(userId);
+        const { is_KYC, is_BankDetailsExists, user } = response;
         setLocalSession({ userId });
         dispatch({
           type: 'INITIAL',
           payload: {
             userId,
+            isKYC: is_KYC,
+            isBank: is_BankDetailsExists,
           },
         });
       } else {
@@ -165,6 +176,8 @@ export function AuthProvider({ children }) {
       loading: status === 'loading',
       authenticated: status === 'authenticated',
       unauthenticated: status === 'unauthenticated',
+      isKYC: state.isKYC,
+      isBank: state.isBank,
       //
       // login,
       // register,
