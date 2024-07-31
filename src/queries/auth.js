@@ -10,7 +10,7 @@ export const useGenerateOTP = () => {
   return mutation;
 };
 export async function verifyOTP(RequestData) {
-  return axios.post(`${HOST_ADDRESS}/verifyOTP/`, RequestData).then((res) => res.data);
+  return axios.post(`${HOST_ADDRESS}/verifyOtp/`, RequestData).then((res) => res.data);
 }
 export const useVerifyOTP = () => {
   const mutation = useMutation(verifyOTP);

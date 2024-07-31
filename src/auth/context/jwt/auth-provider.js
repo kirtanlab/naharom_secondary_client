@@ -4,15 +4,7 @@ import { useEffect, useReducer, useCallback, useMemo } from 'react';
 import axios, { endpoints } from 'src/utils/axios';
 //
 import { AuthContext } from './auth-context';
-import { getSession, isValidToken, setSession } from './utils';
-
-// ----------------------------------------------------------------------
-
-// NOTE:
-// We only build demo at basic level.
-// Customer will need to do some extra handling yourself if you want to extend the logic and other features...
-
-// ----------------------------------------------------------------------
+import { getSession, setImpersonateSession, setLocalSession } from './utils';
 
 const initialState = {
   user: null,
@@ -56,20 +48,15 @@ export function AuthProvider({ children }) {
 
   const initialize = useCallback(async () => {
     try {
-      const { accessToken, userId } = getSession();
-      console.log('isvalidtoken: ', accessToken, userId);
+      const { userId } = getSession();
+      console.log(userId);
 
-      if (accessToken && isValidToken(accessToken)) {
-        setSession({ accessToken, userId: 1 });
-
-        const response = await axios.get(endpoints.auth.me);
-
-        const { user } = response.data;
-
+      if (userId) {
+        setLocalSession({ userId });
         dispatch({
           type: 'INITIAL',
           payload: {
-            user,
+            userId,
           },
         });
       } else {
@@ -95,53 +82,57 @@ export function AuthProvider({ children }) {
     initialize();
   }, [initialize]);
 
-  // LOGIN
-  const login = useCallback(async (email, password) => {
-    const data = {
-      email,
-      password,
-    };
+  // // LOGIN
+  // const login = useCallback(async (email, password) => {
+  //   const data = {
+  //     email,
+  //     password,
+  //   };
 
-    const response = await axios.post(endpoints.auth.login, data);
+  //   const response = await axios.post(endpoints.auth.login, data);
 
-    const { accessToken, user } = response.data;
+  //   const { accessToken, user } = response.data;
 
-    setSession({ accessToken, userId: 2 });
+  //   setSession({ accessToken, userId: 2 });
 
-    dispatch({
-      type: 'LOGIN',
-      payload: {
-        user,
-      },
-    });
-  }, []);
+  //   dispatch({
+  //     type: 'LOGIN',
+  //     payload: {
+  //       user,
+  //     },
+  //   });
+  // }, []);
 
-  // REGISTER
-  const register = useCallback(async (email, password, firstName, lastName) => {
-    const data = {
-      email,
-      password,
-      firstName,
-      lastName,
-    };
+  // // REGISTER
+  // const register = useCallback(async (email, password, firstName, lastName) => {
+  //   const data = {
+  //     email,
+  //     password,
+  //     firstName,
+  //     lastName,
+  //   };
 
-    const response = await axios.post(endpoints.auth.register, data);
+  //   const response = await axios.post(endpoints.auth.register, data);
 
-    const { accessToken, user } = response.data;
+  //   const { accessToken, user } = response.data;
 
-    localStorage.setItem(STORAGE_KEY, accessToken);
+  //   localStorage.setItem(STORAGE_KEY, accessToken);
 
-    dispatch({
-      type: 'REGISTER',
-      payload: {
-        user,
-      },
-    });
-  }, []);
+  //   dispatch({
+  //     type: 'REGISTER',
+  //     payload: {
+  //       user,
+  //     },
+  //   });
+  // }, []);
 
   // LOGOUT
-  const logout = useCallback(async () => {
-    setSession({ accessToken: null, userId: null });
+  const logout = useCallback(async ({ isImpersonateLogout }) => {
+    if (isImpersonateLogout) {
+      setImpersonateSession({ userId: null });
+    } else {
+      setLocalSession({ userId: null });
+    }
     dispatch({
       type: 'LOGOUT',
     });
@@ -153,6 +144,20 @@ export function AuthProvider({ children }) {
   console.log('Checking user: ', checkAuthenticated);
   const status = state.loading ? 'loading' : checkAuthenticated;
 
+  // const memoizedValue = useMemo(
+  //   () => ({
+  //     user: state.user,
+  //     method: 'jwt',
+  //     loading: status === 'loading',
+  //     authenticated: status === 'authenticated',
+  //     unauthenticated: status === 'unauthenticated',
+  //     //
+  //     login,
+  //     register,
+  //     logout,
+  //   }),
+  //   [login, logout, register, state.user, status]
+  // );
   const memoizedValue = useMemo(
     () => ({
       user: state.user,
@@ -161,11 +166,11 @@ export function AuthProvider({ children }) {
       authenticated: status === 'authenticated',
       unauthenticated: status === 'unauthenticated',
       //
-      login,
-      register,
+      // login,
+      // register,
       logout,
     }),
-    [login, logout, register, state.user, status]
+    [logout, state.user, status]
   );
 
   return <AuthContext.Provider value={memoizedValue}>{children}</AuthContext.Provider>;

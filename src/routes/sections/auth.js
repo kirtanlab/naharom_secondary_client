@@ -10,8 +10,8 @@ import { SplashScreen } from 'src/components/loading-screen';
 // ----------------------------------------------------------------------
 
 // JWT
-const JwtLoginPage = lazy(() => import('src/pages/auth/jwt/login'));
-const JwtRegisterPage = lazy(() => import('src/pages/auth/jwt/register'));
+// const JwtLoginPage = lazy(() => import('src/pages/auth/jwt/login'));
+// const JwtRegisterPage = lazy(() => import('src/pages/auth/jwt/register'));
 const JwtOnboard = lazy(() => import('src/pages/auth/jwt/onboard'));
 const JwtOTP = lazy(() => import('src/pages/auth/jwt/otp'));
 // ----------------------------------------------------------------------
@@ -42,23 +42,23 @@ const authJwt = {
         </AuthClassicLayout>
       ),
     },
-    {
-      path: 'login',
-      element: (
-        <AuthClassicLayout>
-          <JwtLoginPage />
-        </AuthClassicLayout>
-      ),
-    },
+    // {
+    //   path: 'login',
+    //   element: (
+    //     <AuthClassicLayout>
+    //       <JwtLoginPage />
+    //     </AuthClassicLayout>
+    //   ),
+    // },
 
-    {
-      path: 'register',
-      element: (
-        <AuthClassicLayout title="Manage the job more effectively with Minimal">
-          <JwtRegisterPage />
-        </AuthClassicLayout>
-      ),
-    },
+    // {
+    //   path: 'register',
+    //   element: (
+    //     <AuthClassicLayout title="Manage the job more effectively with Minimal">
+    //       <JwtRegisterPage />
+    //     </AuthClassicLayout>
+    //   ),
+    // },
   ],
 };
 

@@ -15,8 +15,8 @@ export const paths = {
     jwt: {
       onboard: `${ROOTS.AUTH}/jwt/onboard`,
       otp: `${ROOTS.AUTH}/jwt/otp`,
-      login: `${ROOTS.AUTH}/jwt/login`,
-      register: `${ROOTS.AUTH}/jwt/register`,
+      // login: `${ROOTS.AUTH}/jwt/login`,
+      // register: `${ROOTS.AUTH}/jwt/register`,
     },
   },
   profile: {

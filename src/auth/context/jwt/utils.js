@@ -73,30 +73,26 @@ export const tokenExpired = (exp) => {
 // }
 // };
 
-export const setSession = ({ accessToken, userId }) => {
-  if (accessToken) {
-    localStorage.setItem('accessToken', accessToken);
-    if (userId) {
-      localStorage.setItem('userId', userId);
-    }
-
-    axios.defaults.headers.common.Authorization = `Bearer ${accessToken}`;
-    const { exp } = jwtDecode(accessToken);
-    tokenExpired(exp);
+export const setImpersonateSession = ({ userId }) => {
+  if (userId) {
+    sessionStorage.setItem('ImpersonateUserId', userId);
+    sessionStorage.setItem('isImpersonate', true);
   } else {
-    localStorage.removeItem('accessToken');
-    delete axios.defaults.headers.common.Authorization;
+    sessionStorage.removeItem('ImpersonateUserId');
+  }
+};
+export const setLocalSession = ({ userId }) => {
+  if (userId) {
+    localStorage.setItem('userId', userId);
+  } else {
+    localStorage.removeItem('userId');
   }
 };
 export const getSession = () => {
   const isImpersonate = sessionStorage.getItem('isImpersonate') ?? false;
-  console.log('isImpersonate', isImpersonate);
-  if (isImpersonate) {
-    const accessToken = sessionStorage.getItem('accessToken');
-    const userId = sessionStorage.getItem('userId');
-    return { accessToken, userId };
-  }
-  const accessToken = localStorage.getItem('accessToken');
+
+  const ImpersonateUserId = sessionStorage.getItem('ImpersonateUserId');
+
   const userId = localStorage.getItem('userId');
-  return { accessToken, userId };
+  return { userId, ImpersonateUserId, isImpersonate };
 };

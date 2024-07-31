@@ -119,7 +119,7 @@ export default function JwtOnboard() {
       //   },
       // };
       console.log('data after generateOTP:', res_data);
-      if (generateOTP.isSuccess) {
+      if (res_data) {
         enqueueSnackbar(`OTP sent on ${data.mobileNumber}!`, {
           variant: 'success',
           color: 'success',
@@ -129,12 +129,12 @@ export default function JwtOnboard() {
           state: {
             loginType: data.loginType,
             mobileNumber: data.mobileNumber,
-            refId: res_data.results.referenceId,
+            refId: res_data.result.referenceId,
           },
         });
       }
-    } catch {
-      console.log('genereateOTP error; ', generateOTP?.failureReason?.response?.data?.message);
+    } catch (err) {
+      console.log('genereateOTP error; ', generateOTP?.failureReason?.response?.data?.message, err);
       enqueueSnackbar(
         generateOTP?.failureReason?.response?.data?.message
           ? generateOTP?.failureReason?.response?.data?.message
