@@ -17,7 +17,7 @@ import WalletIcon from '@mui/icons-material/Wallet';
 import { Button } from '@mui/material';
 import { useRouter } from 'src/routes/hooks';
 import { useLocation } from 'react-router';
-import { getSession, setSession } from 'src/auth/context/jwt/utils';
+import { getSession } from 'src/auth/context/jwt/utils';
 // ----------------------------------------------------------------------
 
 export default function OneView() {
