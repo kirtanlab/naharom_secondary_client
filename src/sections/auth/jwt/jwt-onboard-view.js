@@ -135,16 +135,14 @@ export default function JwtOnboard() {
       }
     } catch (err) {
       console.log('genereateOTP error; ', generateOTP?.failureReason?.response?.data?.message, err);
-      enqueueSnackbar(
-        generateOTP?.failureReason?.response?.data?.message
-          ? generateOTP?.failureReason?.response?.data?.message
-          : "Can't generate OTP at this time",
-        {
-          variant: 'error',
-          color: 'error',
-          anchorOrigin: { vertical: 'top', horizontal: 'center' },
-        }
-      );
+      const message = generateOTP?.failureReason?.response?.data?.message
+        ? generateOTP?.failureReason?.response?.data?.message
+        : "Can't generate OTP at this time";
+      enqueueSnackbar("Can't generate OTP at this time", {
+        variant: 'error',
+        color: 'error',
+        anchorOrigin: { vertical: 'top', horizontal: 'center' },
+      });
       // alert('Check your internet connectivity');
       console.log('error in handleSubmit of GenerateOTP');
       console.log('error: ', generateOTP.error);
@@ -152,77 +150,6 @@ export default function JwtOnboard() {
 
     // Here you can add logic to proceed to the next step or send data to your backend
   };
-
-  // const renderHead = (
-  //   <Stack spacing={2} sx={{ mb: 5 }}>
-  //     <Typography variant="h3">Welcome</Typography>
-
-  //     {/* <Stack direction="row" spacing={0.5}>
-  //       <Typography variant="body2">New user?</Typography>
-
-  //       <Link component={RouterLink} href={paths.auth.jwt.register} variant="subtitle2">
-  //         Create an account
-  //       </Link>
-  //     </Stack> */}
-  //   </Stack>
-  // );
-
-  // const renderSelection = (
-  //   <Stack spacing={2.5}>
-  //     <FormControl component="fieldset">
-  //       <Typography
-  //         sx={{
-  //           fontSize: 18,
-  //           marginBottom: '16px',
-  //         }}
-  //       >
-  //         Login/ Register as
-  //       </Typography>
-  //       <RadioGroup name="radio-buttons" value={selectedValue} onChange={handleChange}>
-  //         <FormControlLabel
-  //           value="individual"
-  //           control={<Radio size="medium" />}
-  //           sx={{ marginTop: 2 }}
-  //           label={<Typography sx={{ fontSize: 16 }}>Individual</Typography>}
-  //         />
-  //         <FormControlLabel
-  //           value="company"
-  //           control={<Radio size="medium" />}
-  //           sx={{ marginTop: 2 }}
-  //           label={<Typography sx={{ fontSize: 16 }}>Company</Typography>}
-  //         />
-  //       </RadioGroup>
-  //       <Stack spacing={2.5} sx={{ mt: 2, mb: 2 }}>
-  //         <Typography variant="subtitle1">Enter your mobile number</Typography>
-  //         <Controller
-  //           name="mobileNumber"
-  //           control={control}
-  //           render={({ field, fieldState: { error } }) => (
-  //             <TextField
-  //               {...field}
-  //               fullWidth
-  //               error={!!error}
-  //               helperText={error?.message}
-  //               InputProps={{
-  //                 startAdornment: <InputAdornment position="start">+91</InputAdornment>,
-  //               }}
-  //               placeholder="Enter 10 digit mobile number"
-  //             />
-  //           )}
-  //         />
-  //       </Stack>
-  //       <Button
-  //         variant="contained"
-  //         color="inherit"
-  //         type="submit"
-  //         // onClick={handleSubmit}
-  //         sx={{ marginTop: 5, width: '40%' }}
-  //       >
-  //         <Typography sx={{ fontSize: 16 }}>Next</Typography>
-  //       </Button>
-  //     </FormControl>
-  //   </Stack>
-  // );
 
   return (
     <Box sx={{ maxWidth: 400, margin: 'auto', mt: 4 }}>

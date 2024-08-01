@@ -15,13 +15,20 @@ export default function GuestGuard({ children }) {
 
   const returnTo = searchParams.get('returnTo') || paths.dashboard.root;
 
-  const { authenticated } = useAuthContext();
-
+  const { authenticated, isKYC, isBank, method, user_role } = useAuthContext();
+  // console.log('GuestGuard: ', isKYC, authenticated);
   const check = useCallback(() => {
-    if (authenticated) {
-      router.replace(returnTo);
+    if (authenticated && !isKYC) {
+      if (user_role === 'Individual') {
+        // console.log('entering individual');
+        router.replace(paths.profile.user);
+      } else {
+        router.replace(paths.profile.company);
+      }
+    } else if (authenticated && isKYC) {
+      router.replace(paths.dashboard.root);
     }
-  }, [authenticated, returnTo, router]);
+  }, [authenticated, router, isKYC, user_role]);
 
   useEffect(() => {
     check();

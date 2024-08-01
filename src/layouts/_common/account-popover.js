@@ -40,10 +40,8 @@ const OPTIONS = [
 export default function AccountPopover() {
   const router = useRouter();
 
-  const { user } = useMockedUser();
-
-  const { logout } = useAuthContext();
-
+  const { logout, user, phoneNumber, user_role } = useAuthContext();
+  console.log('phoneNumber: ', phoneNumber, user_role, user);
   const popover = usePopover();
 
   const handleLogout = async () => {
@@ -80,8 +78,8 @@ export default function AccountPopover() {
         }}
       >
         <Avatar
-          src={user?.photoURL}
-          alt={user?.displayName}
+          // src={user?.photoURL}
+          // alt={user?.displayName}
           sx={{
             width: 36,
             height: 36,
@@ -93,23 +91,19 @@ export default function AccountPopover() {
       <CustomPopover open={popover.open} onClose={popover.onClose} sx={{ width: 200, p: 0 }}>
         <Box sx={{ p: 2, pb: 1.5 }}>
           <Typography variant="subtitle2" noWrap>
-            {user?.displayName}
-          </Typography>
-
-          <Typography variant="body2" sx={{ color: 'text.secondary' }} noWrap>
-            {user?.email}
+            Mobile: +91{phoneNumber}
           </Typography>
         </Box>
 
         <Divider sx={{ borderStyle: 'dashed' }} />
 
-        <Stack sx={{ p: 1 }}>
+        {/* <Stack sx={{ p: 1 }}>
           {OPTIONS.map((option) => (
             <MenuItem key={option.label} onClick={() => handleClickItem(option.linkTo)}>
               {option.label}
             </MenuItem>
           ))}
-        </Stack>
+        </Stack> */}
 
         <Divider sx={{ borderStyle: 'dashed' }} />
 

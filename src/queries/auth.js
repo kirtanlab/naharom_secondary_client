@@ -2,11 +2,29 @@ import axios from 'axios';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { HOST_ADDRESS } from './host';
 //
-export async function generateOTP(RequestData) {
-  return axios.post(`${HOST_ADDRESS}/generateOTP/`, RequestData).then((res) => res.data);
-}
-export const useGenerateOTP = () => {
-  const mutation = useMutation(generateOTP);
+
+export const useGenerateOTP = (timeoutMs = 10000) => {
+  const mutation = useMutation(async (data) => {
+    const source = axios.CancelToken.source();
+    const timeoutId = setTimeout(() => {
+      source.cancel('Request timed out');
+    }, timeoutMs);
+
+    try {
+      const response = await axios.post(`${HOST_ADDRESS}/generateOTP/`, data, {
+        cancelToken: source.token,
+      });
+      clearTimeout(timeoutId);
+      return response.data;
+    } catch (error) {
+      clearTimeout(timeoutId);
+      if (axios.isCancel(error)) {
+        throw new Error('Request timed out');
+      }
+      throw error;
+    }
+  });
+
   return mutation;
 };
 export async function verifyOTP(RequestData) {
@@ -17,6 +35,5 @@ export const useVerifyOTP = () => {
   return mutation;
 };
 
-export const getStatus = async (userId) => {
-  return await axios.get(`${HOST_ADDRESS}/verifyStatus/${userId}`).then((res) => res.data);
-};
+export const getStatus = async (userId) =>
+  axios.get(`${HOST_ADDRESS}/verifyStatus/${userId}`).then((res) => res.data);

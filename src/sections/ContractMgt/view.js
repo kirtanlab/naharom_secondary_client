@@ -8,13 +8,26 @@ import ContractTable from './contract-table';
 const TABLE_HEAD = [
   { id: 'primary_invoice_id', label: 'Invoice id', align: 'center' },
   { id: 'product_name', label: 'Name' },
-  { id: 'principle_amt', label: 'Loan Amount', align: 'center' },
-  { id: 'tenure_in_days', label: 'Loan Period', align: 'center' },
+  { id: 'principle_amt', label: 'Total Loan Amount', align: 'center' },
+  { id: 'tenure_in_days', label: 'Loan Period (Days)', align: 'center' },
   { id: 'no_of_partitions', label: 'Fractionalized Units', align: 'center' },
   { id: 'principle_amt', label: 'Fractionalized Amount', align: 'center' },
   // { id: 'timeLeft', label: 'Time Left' },
   // { id: 'interest_rate', label: 'Interest Rate' },
-  // { id: 'interest', label: 'Interest fractional' },
+  // { id: 'interest', label: 'Interest fractional' }s,
+  { id: 'actions', label: 'Actions' },
+];
+const TABLE_HEAD_UNFRACTIONALIZED = [
+  { id: 'primary_invoice_id', label: 'Invoice id', align: 'center' },
+  { id: 'product_name', label: 'Name' },
+  { id: 'principle_amt', label: 'Total Loan Amount', align: 'center' },
+  { id: 'principle_amt', label: 'Remaining Loan Amount', align: 'center' },
+  { id: 'tenure_in_days', label: 'Loan Period (Days)', align: 'center' },
+  { id: 'no_of_partitions', label: 'Fractionalized Units', align: 'center' },
+  { id: 'principle_amt', label: 'Fractionalized Amount', align: 'center' },
+  // { id: 'timeLeft', label: 'Time Left' },
+  // { id: 'interest_rate', label: 'Interest Rate' },
+  // { id: 'interest', label: 'Interest fractional' }s,
   { id: 'actions', label: 'Actions' },
 ];
 

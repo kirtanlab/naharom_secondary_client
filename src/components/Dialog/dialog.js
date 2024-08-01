@@ -5,7 +5,7 @@ import PropTypes from 'prop-types';
 import { useTheme } from '@emotion/react';
 import Label from '../label';
 
-function CustomDialog({ openFlag, setonClose, placeHolder, component }) {
+function CustomDialog({ openFlag, setonClose, placeHolder, component, maxWidth }) {
   const theme = useTheme();
 
   const handleClose = () => {
@@ -16,6 +16,7 @@ function CustomDialog({ openFlag, setonClose, placeHolder, component }) {
   return (
     <Dialog
       fullWidth
+      maxWidth={maxWidth ?? 'md'}
       open={openFlag}
       onClose={handleClose}
       transitionDuration={{
@@ -55,5 +56,6 @@ CustomDialog.propTypes = {
   setonClose: PropTypes.func,
   placeHolder: PropTypes.string,
   component: PropTypes.any,
+  maxWidth: PropTypes.oneOf(['xl', 'xs', 'lg', 'md', 'sm']),
 };
 export default CustomDialog;

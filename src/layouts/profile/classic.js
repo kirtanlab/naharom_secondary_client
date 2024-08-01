@@ -14,15 +14,6 @@ import Logo from 'src/components/logo';
 
 // ----------------------------------------------------------------------
 
-const METHODS = [
-  {
-    id: 'jwt',
-    label: 'Jwt',
-    path: paths.auth.jwt.login,
-    icon: '/assets/icons/auth/ic_jwt.svg',
-  },
-];
-
 export default function ProfileClassicLayout({ children, image, title }) {
   const { method } = useAuthContext();
 

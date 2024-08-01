@@ -51,8 +51,8 @@ export function useNavData() {
       {
         // subheader: 'overview v5.3.0',
         items: [
-          { title: 'Dashboard', path: paths.dashboard.root, icon: ICONS.dashboard },
-          { title: 'Auction', path: paths.dashboard.Auction, icon: ICONS.invoice },
+          // { title: 'Dashboard', path: paths.dashboard.root, icon: ICONS.dashboard },
+          { title: 'dashboard', path: paths.dashboard.Auction, icon: ICONS.invoice },
           { title: 'Contracts', path: paths.dashboard.ContractMgt, icon: ICONS.invoice },
           { title: 'Users', path: paths.dashboard.UsersMgt, icon: ICONS.user },
           {
@@ -62,24 +62,6 @@ export function useNavData() {
           },
         ],
       },
-
-      // MANAGEMENT
-      // ----------------------------------------------------------------------
-      // {
-      //   subheader: 'management',
-      //   items: [
-      //     {
-      //       title: 'user',
-      //       path: paths.dashboard.group.root,
-      //       icon: ICONS.user,
-      //       children: [
-      //         { title: 'four', path: paths.dashboard.group.root },
-      //         { title: 'five', path: paths.dashboard.group.five },
-      //         { title: 'six', path: paths.dashboard.group.six },
-      //       ],
-      //     },
-      //   ],
-      // },
     ],
     []
   );

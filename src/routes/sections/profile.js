@@ -5,7 +5,7 @@ import { AuthGuard } from 'src/auth/guard';
 // layouts
 import DashboardLayout from 'src/layouts/dashboard';
 // components
-import { LoadingScreen } from 'src/components/loading-screen';
+import { LoadingScreen, SplashScreen } from 'src/components/loading-screen';
 import ProfileClassicLayout from 'src/layouts/profile/classic';
 
 // ----------------------------------------------------------------------

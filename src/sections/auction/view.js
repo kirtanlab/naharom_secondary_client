@@ -39,10 +39,14 @@ const TABLE_HEAD = [
   { id: 'Invoice_expiration_time', label: 'Due Date' },
   // { id: 'status', label: 'Status' },
   { id: 'Invoice_remaining_partitions', label: 'Units for Sale' },
-  { id: 'Invoice_principle_amt', label: 'Total Amount' },
+  // { id: 'Invoice_principle_amt', label: 'Total Amount' },
   { id: 'Invoice_interest', label: 'Interest fractional' },
+  // Time Left
+  { id: 'time_left', label: 'Time Left For Buy' },
+  { id: 'sell_type', label: 'Sell Type' },
   { id: 'actions', label: 'Actions' },
 ];
+
 export default function AuctionView() {
   const settings = useSettingsContext();
   const userId = 2;
@@ -71,7 +75,7 @@ export default function AuctionView() {
       </>
     );
   }
-  if (AllInvoiceIsError || AllInvoiceData === undefined) {
+  if (AllInvoiceIsError || !AllInvoiceData) {
     console.log('in error!');
 
     return (
@@ -91,7 +95,7 @@ export default function AuctionView() {
       </>
     );
   }
-  console.log('AllInvoiceDataTest: ', AllInvoiceData);
+  console.log('AllInvoiceDataTest: ', AllInvoiceData.invoices);
   return (
     <Container maxWidth={settings.themeStretch ? false : 'xl'}>
       <Typography variant="h4"> Auctions </Typography>
@@ -106,7 +110,7 @@ export default function AuctionView() {
           border: (theme) => `dashed 1px ${theme.palette.divider}`,
         }}
       /> */}
-        <AuctionTable tableData={AllInvoiceData.Data} TABLE_HEAD={TABLE_HEAD} />
+        <AuctionTable tableData={AllInvoiceData.invoices} TABLE_HEAD={TABLE_HEAD} />
       </Grid>
     </Container>
   );

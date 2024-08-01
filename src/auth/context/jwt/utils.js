@@ -81,7 +81,7 @@ export const setImpersonateSession = ({ userId }) => {
     sessionStorage.removeItem('ImpersonateUserId');
   }
 };
-export const setLocalSession = ({ userId }) => {
+export const setLocalSession = ({ userId, phoneNumber }) => {
   if (userId) {
     localStorage.setItem('userId', userId);
   } else {
@@ -93,6 +93,12 @@ export const getSession = () => {
 
   const ImpersonateUserId = sessionStorage.getItem('ImpersonateUserId');
 
-  const userId = localStorage.getItem('userId');
-  return { userId, ImpersonateUserId, isImpersonate };
+  const LocalUserId = localStorage.getItem('userId');
+  const userId = isImpersonate ? ImpersonateUserId : LocalUserId;
+  return { userId };
+};
+
+export const checkImpersonate = () => {
+  const isImpersonate = sessionStorage.getItem('isImpersonate') ?? false;
+  return isImpersonate;
 };

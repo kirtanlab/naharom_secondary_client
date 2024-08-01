@@ -2,6 +2,9 @@ import { Alert, Container, Grid, Typography, AlertTitle } from '@mui/material';
 import { useSettingsContext } from 'src/components/settings';
 import { TableSkeleton, useTable } from 'src/components/table';
 import { useGetAllUsers } from 'src/queries/users';
+
+import { useAuthContext } from 'src/auth/hooks';
+import { getSession } from 'src/auth/context/jwt/utils';
 import UserTable from './user-table';
 //
 const TABLE_HEAD = [
@@ -18,13 +21,15 @@ export default function UserMgtView() {
   const settings = useSettingsContext();
   const table = useTable({ defaultOrderBy: 'timeLeft' });
   const denseHeight = table.dense ? 56 : 76;
+  const { userId } = getSession();
   const {
     data: AllUsers,
     error: AllUsersError,
     isLoading: AllUserLoading,
     isSuccess: AllUsersSuccess,
     isError: AllUsersIsError,
-  } = useGetAllUsers();
+  } = useGetAllUsers(userId);
+
   if (AllUserLoading || AllUsers?.data?.length === 0) {
     return (
       <>
@@ -60,7 +65,24 @@ export default function UserMgtView() {
     );
   }
   console.log('AllInvoiceDataTest: ', AllUsers);
-
+  if (AllUsers === null) {
+    return (
+      <>
+        <Container maxWidth={settings.themeStretch ? false : 'xl'}>
+          <Typography variant="h4"> Users </Typography>
+          <Alert severity="error" sx={{ mt: 2 }} onClose={() => console.log('closed alert')}>
+            <AlertTitle>Error</AlertTitle>
+            Opps! You do not have permission to access this page
+          </Alert>
+          <Grid xs={12} marginTop={2}>
+            {[...Array(table.rowsPerPage)].map((i, index) => (
+              <TableSkeleton key={index} sx={{ height: denseHeight }} />
+            ))}
+          </Grid>
+        </Container>
+      </>
+    );
+  }
   return (
     <Container maxWidth={settings.themeStretch ? false : 'xl'}>
       <Typography variant="h4"> Users </Typography>

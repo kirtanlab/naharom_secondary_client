@@ -34,6 +34,7 @@ export default function UserTable({ TABLE_HEAD, tableData }) {
     last_name: '',
     pan_no: false,
   };
+
   const theme = useTheme();
   const table = useTable({ defaultOrderBy: 'pan_no' });
   const confirm = useBoolean();

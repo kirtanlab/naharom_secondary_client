@@ -5,6 +5,7 @@ import CustomPopover from 'src/components/custom-popover/custom-popover';
 import CustomDialog from 'src/components/Dialog/dialog';
 import { useState } from 'react';
 import BuyIrrModel from './buy-irr-model';
+import InvoiceModel from '../InvoiceModel/view';
 //
 const { useTheme } = require('@emotion/react');
 const {
@@ -25,6 +26,7 @@ const { useBoolean } = require('src/hooks/use-boolean');
 //
 const AuctionTableRow = ({ row, selected, onSelectRow, table, confirm }) => {
   const [buyModel, setBuyModel] = useState(false);
+  const [invoiceModel, setInvoiceModel] = useState(false);
   const TextButton = styled(Button)(({ theme }) => ({
     textAlign: 'center',
     textTransform: 'none',
@@ -42,14 +44,14 @@ const AuctionTableRow = ({ row, selected, onSelectRow, table, confirm }) => {
   const rowConfirm = useBoolean();
   // const approveConfirm = useBoolean();
   // const RejectConfi = useBoolean();
-  const invoicePrincipleAmt = row?.Invoice_principle_amt;
-  const invoiceNoOfPartitions = row?.Invoice_no_of_partitions;
-  const perUnitValue =
-    typeof invoicePrincipleAmt === 'number' &&
-    typeof invoiceNoOfPartitions === 'number' &&
-    invoiceNoOfPartitions !== 0
-      ? invoicePrincipleAmt / invoiceNoOfPartitions
-      : 0;
+  // const invoicePrincipleAmt = row?.Invoice_principle_amt;
+  // const invoiceNoOfPartitions = row?.Invoice_no_of_partitions;
+  // const perUnitValue =
+  //   typeof invoicePrincipleAmt === 'number' &&
+  //   typeof invoiceNoOfPartitions === 'number' &&
+  //   invoiceNoOfPartitions !== 0
+  //     ? invoicePrincipleAmt / invoiceNoOfPartitions
+  //     : 0;
   return (
     <TableRow hover selected={selected}>
       {/* <TableCell padding="checkbox">
@@ -59,7 +61,7 @@ const AuctionTableRow = ({ row, selected, onSelectRow, table, confirm }) => {
         {/* <TextButton> */}
 
         <ListItemText
-          onClick={() => alert('wiww')}
+          onClick={() => setInvoiceModel(true)}
           primary={row?.Invoice_id || '--'}
           primaryTypographyProps={{
             typography: 'subtitle',
@@ -95,13 +97,11 @@ const AuctionTableRow = ({ row, selected, onSelectRow, table, confirm }) => {
       </TableCell>
       <TableCell>
         <ListItemText
-          primary={
-            row?.Invoice_remaining_partitions
-              ? `${row?.Invoice_remaining_partitions}\xa0Units`
-              : '--'
-          }
+          primary={row?.Invoice_remaining_units ? `${row?.Invoice_remaining_units}\xa0Units` : '--'}
           primaryTypographyProps={{ typography: 'body2', noWrap: true }}
-          secondary={`Per Unit Value: ${perUnitValue}`}
+          secondary={`Per Unit Value: ${
+            row?.Invoice_per_unit_price ? row?.Invoice_per_unit_price : '--'
+          }`}
           secondaryTypographyProps={{
             mt: 0.5,
             component: 'span',
@@ -109,12 +109,12 @@ const AuctionTableRow = ({ row, selected, onSelectRow, table, confirm }) => {
           }}
         />
       </TableCell>
-      <TableCell>
+      {/* <TableCell>
         <ListItemText
           primary={row?.Invoice_principle_amt ? row?.Invoice_principle_amt : '--'}
           primaryTypographyProps={{ typography: 'body2', noWrap: true }}
         />
-      </TableCell>
+      </TableCell> */}
       <TableCell>
         <ListItemText
           primary={row?.Invoice_interest ? `${row?.Invoice_interest} %` : '--'}
@@ -124,6 +124,24 @@ const AuctionTableRow = ({ row, selected, onSelectRow, table, confirm }) => {
             component: 'span',
             typography: 'caption',
           }}
+        />
+      </TableCell>
+      {/* Invoice_to_date */}
+      <TableCell>
+        <ListItemText
+          primary={row?.Invoice_to_date ? `${row?.Invoice_to_date} ` : '--'}
+          primaryTypographyProps={{ typography: 'body2', noWrap: false, pr: 10 }}
+          secondaryTypographyProps={{
+            mt: 0.5,
+            component: 'span',
+            typography: 'caption',
+          }}
+        />
+      </TableCell>
+      <TableCell>
+        <ListItemText
+          primary="Fixed Amount Sell"
+          primaryTypographyProps={{ typography: 'body2', noWrap: false }}
         />
       </TableCell>
       <TableCell sx={{ pr: 0 }}>
@@ -159,6 +177,13 @@ const AuctionTableRow = ({ row, selected, onSelectRow, table, confirm }) => {
         setonClose={() => setBuyModel(false)}
         placeHolder="IRR Calculator for Buying"
         component={<BuyIrrModel row={row} />}
+      />
+      <CustomDialog
+        openFlag={invoiceModel}
+        maxWidth="xl"
+        setonClose={() => setInvoiceModel(false)}
+        placeHolder="Borrower's Data"
+        component={<InvoiceModel />}
       />
     </TableRow>
   );

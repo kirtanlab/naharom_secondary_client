@@ -17,8 +17,8 @@ const loginPaths = {
 export default function AuthGuard({ children }) {
   const router = useRouter();
 
-  const { authenticated, isKYC, isBank, method } = useAuthContext();
-
+  const { authenticated, isKYC, isBank, method, user_role } = useAuthContext();
+  // console.log('AuthGuard: ', isKYC, authenticated);
   const [checked, setChecked] = useState(false);
 
   const check = useCallback(() => {
@@ -33,11 +33,25 @@ export default function AuthGuard({ children }) {
 
       router.replace(href);
     } else if (authenticated && !isKYC) {
-      router.replace(paths.profile.user);
-    } else {
+      setChecked(true);
+      if (user_role === 'Individual') {
+        // console.log('entering individual');
+        router.replace(paths.profile.user);
+      } else {
+        router.replace(paths.profile.company);
+      }
+    } else if (authenticated && isKYC) {
+      router.replace(paths.dashboard.root);
       setChecked(true);
     }
-  }, [authenticated, method, router]);
+    // } else if (authenticated && !isBank) {
+    //   if (user_role === 'Individual') {
+    //     router.replace(paths.profile.user);
+    //   } else {
+    //     router.replace(paths.profile.company);
+    //   }
+    // }
+  }, [authenticated, method, router, isKYC, user_role]);
 
   useEffect(() => {
     check();

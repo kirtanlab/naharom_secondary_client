@@ -18,6 +18,28 @@ import Password from '../profile-auth/password';
 
 // ----------------------------------------------------------------------
 
+const individualTabs = [
+  {
+    value: 'profile',
+    label: 'Profile',
+    icon: <Iconify icon="solar:user-id-outline" width={26} />,
+    disabled: false,
+  },
+  {
+    value: 'company',
+    label: 'Company Profile',
+    icon: <Iconify icon="octicon:organization-16" width={24} />,
+
+    disabled: false,
+  },
+  {
+    value: 'bank',
+    label: 'Bank Account',
+    icon: <Iconify icon="ant-design:bank-filled" width={27} />,
+    disabled: false,
+  },
+];
+
 const TABS = [
   {
     value: 'profile',
@@ -39,12 +61,12 @@ const TABS = [
     disabled: false,
   },
 
-  {
-    value: 'pan',
-    label: 'PAN Number',
-    icon: <Iconify icon="solar:document-outline" width={24} />,
-    disabled: false,
-  },
+  // {
+  //   value: 'pan',
+  //   label: 'PAN Number',
+  //   icon: <Iconify icon="solar:document-outline" width={24} />,
+  //   disabled: false,
+  // },
   {
     value: 'password',
     label: 'Password',
@@ -184,7 +206,7 @@ export default function ProfileView() {
             </Typography>
           </Box>
         )}
-        {currentTab === 'pan' && (
+        {/* {currentTab === 'pan' && (
           <Box
             sx={{
               mt: 2,
@@ -222,7 +244,7 @@ export default function ProfileView() {
               </Typography>
             )}
           </Box>
-        )}
+        )} */}
         {currentTab === 'password' && <Password password="wow" />}
       </Box>
     </Container>

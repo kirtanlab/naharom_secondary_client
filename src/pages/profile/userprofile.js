@@ -5,6 +5,7 @@ import UserForm from 'src/sections/profile-auth/user-profile';
 // ----------------------------------------------------------------------
 
 export default function UserProfile() {
+  console.log('User Profile entered');
   return (
     <>
       <Helmet>

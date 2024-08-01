@@ -15,20 +15,34 @@ import Iconify from 'src/components/iconify';
 import FormProvider, { RHFTextField, RHFAutocomplete } from 'src/components/hook-form';
 import { useSnackbar } from 'src/components/snackbar';
 import { useResponsive } from 'src/hooks/use-responsive';
+import { useGetIndividualDetails, useSubmitProfile } from 'src/queries/profile';
+import { getSession } from 'src/auth/context/jwt/utils';
+import { LoadingScreen } from 'src/components/loading-screen';
+import { InputAdornment, TextField } from '@mui/material';
+import { useAuthContext } from 'src/auth/hooks';
 
-export default function UserForm({ currentUser }) {
-  const securityQuestions = [
-    { id: 1, label: "Please enter your father's middle name" },
-    { id: 2, label: 'Please enter your first pet name' },
-    { id: 3, label: 'Please enter your favorite sportsman' },
-    { id: 4, label: 'Please enter your birth date' },
-  ];
+export default function UserForm() {
+  console.log('UserForm Entered');
+  const { userId } = getSession();
+  const { initialize } = useAuthContext();
+  console.log('userId: ', userId);
+  const {
+    data: fetchCurrentUser,
+    error: IndividualError,
+    isError: IndividualIsError,
+    isSuccess: IndividualIsSuccess,
+    isLoading: IndividualIsLoading,
+  } = useGetIndividualDetails(userId);
 
-  // const router = useRouter();
+  const [isEditable, setIsEditable] = useState(false);
+  const [lightEditable, setLightEditable] = useState(true);
+  const [currentUser, setCurrentUser] = useState(fetchCurrentUser ?? null);
   const { enqueueSnackbar } = useSnackbar();
+
   const mdUp = useResponsive('up', 'md');
   const lgUp = useResponsive('up', 'lg');
   const ismdlgUP = mdUp || lgUp;
+  const submitProfile = useSubmitProfile();
 
   const NewUserSchema = Yup.object().shape({
     first_name: Yup.string().required('First Name is required'),
@@ -38,23 +52,32 @@ export default function UserForm({ currentUser }) {
     state: Yup.string().required('State is required'),
     city: Yup.string().required('City is required'),
     zipCode: Yup.string().required('Zip code is required'),
-    phoneNumber: Yup.string().required('Phone number is required'),
-    securityAns: Yup.string().required('Security answer is required'),
-    securityQue: Yup.string().required('Security question is required'),
+    // phoneNumber: Yup.string().required('Phone number is required'),
+
+    alternatePhone: Yup.string()
+      .required('Alternate Phone number is required')
+      .matches(/^[0-9]{10}$/, 'Enter a Valid Mobile Number'),
+    email: Yup.string().email().required('Email is required'),
+    pan: Yup.string()
+      .required('PAN Number is required')
+      .matches(/^[A-Z]{5}[0-9]{4}[A-Z]{1}$/, 'Enter a valid PAN Number'),
+    // securityAns: Yup.string().required('Security answer is required'),
+    // securityQue: Yup.string().required('Security question is required'),
   });
 
   const defaultValues = useMemo(
     () => ({
-      first_name: currentUser?.first_name || '',
-      last_name: currentUser?.last_name || '',
-      addressOne: currentUser?.addressOne || '',
-      addressTwo: currentUser?.addressTwo || '',
-      state: currentUser?.state || '',
-      city: currentUser?.city || '',
-      zipCode: currentUser?.zipCode || '',
-      phoneNumber: currentUser?.phoneNumber || '',
-      securityAns: currentUser?.securityAns || '',
-      securityQue: currentUser?.securityQue || '',
+      first_name: currentUser?.prefillData?.firstName || '',
+      last_name: currentUser?.prefillData?.lastName || '',
+      addressOne: currentUser?.prefillData?.address1?.Address || '',
+      addressTwo: '',
+      state: currentUser?.prefillData?.address1?.state || '',
+      city: currentUser?.prefillData?.city || '',
+      zipCode: currentUser?.prefillData?.address1?.Postal || '',
+      // phoneNumber: fetchCurrentUser?.phoneNumber || '',
+      alternatePhone: currentUser?.prefillData?.alternatePhone || '',
+      email: currentUser?.prefillData?.email || '',
+      pan: currentUser?.prefillData?.panCardNumber || '',
     }),
     [currentUser]
   );
@@ -70,25 +93,72 @@ export default function UserForm({ currentUser }) {
     control,
     setValue,
     handleSubmit,
-    formState: { isSubmitting },
+    formState: { isSubmitting, errors },
   } = methods;
 
   const values = watch();
-
+  console.log('errors for submitssion: ', errors);
   useEffect(() => {
-    enqueueSnackbar('Successfully logged in');
-  }, [enqueueSnackbar]);
+    if (!IndividualIsLoading) enqueueSnackbar('Successfully logged in');
 
-  const [isEditable, setIsEditable] = useState(false);
+    if (currentUser?.prefillData == null) {
+      setIsEditable(true);
+      setLightEditable(false);
+    }
+    if (currentUser?.prefillData != null) {
+      setLightEditable(true);
 
+      setIsEditable(false);
+    }
+  }, [enqueueSnackbar, IndividualIsLoading, currentUser]);
+
+  if (IndividualIsLoading || submitProfile.isLoading) {
+    return <LoadingScreen />;
+  }
+  if (IndividualIsError || submitProfile.isError) {
+    console.log('Error: ', IndividualError, submitProfile.error);
+  }
   const onSubmit = handleSubmit(async (data) => {
+    console.log('data: ', data);
     try {
-      await new Promise((resolve) => setTimeout(resolve, 500));
-      reset();
-      enqueueSnackbar(currentUser ? 'Update success!' : 'Create success!');
+      const finalObj = {
+        user: userId,
+        alternatePhone: data.alternatePhone,
+        email: data.email,
+        address1: data.addressOne,
+        address2: data.addressTwo,
+        panCardNumber: data.pan,
+        firstName: data.first_name,
+        lastName: data.last_name,
+        state: data.state,
+        postalCode: data.zipCode,
+        city: data.city,
+      };
+      console.log('Fina Obj: ', finalObj);
+      const resData = await submitProfile.mutateAsync(finalObj);
+      console.log('resData: ', resData);
+      if (resData) {
+        enqueueSnackbar(`Data Updated Successfully`, {
+          variant: 'success',
+          color: 'success',
+          anchorOrigin: { vertical: 'top', horizontal: 'center' },
+        });
+        window.location.reload();
+      }
+
       console.info('DATA', data);
     } catch (error) {
-      console.error(error);
+      enqueueSnackbar(
+        submitProfile?.failureReason?.response?.data?.message
+          ? submitProfile?.failureReason?.response?.data?.message
+          : "Can't Submit Profile at this time",
+        {
+          variant: 'error',
+          color: 'error',
+          anchorOrigin: { vertical: 'top', horizontal: 'center' },
+        }
+      );
+      console.error('error while submitingProfile: ', error);
     }
   });
 
@@ -121,51 +191,82 @@ export default function UserForm({ currentUser }) {
           >
             <RHFTextField name="first_name" label="First Name *" disabled={!isEditable} />
             <RHFTextField name="last_name" label="Last Name *" disabled={!isEditable} />
-            <RHFTextField name="addressOne" label="Company Address 1 *" disabled={!isEditable} />
-            <RHFTextField name="addressTwo" label="Company Address 2" disabled={!isEditable} />
-            <RHFTextField name="city" label="City *" disabled={!isEditable} />
-            <RHFTextField name="state" label="State/Region *" disabled={!isEditable} />
-            <RHFTextField name="zipCode" label="Zip/Code *" disabled={!isEditable} />
-            <RHFTextField name="phoneNumber" label="Phone Number *" disabled={!isEditable} />
-            <RHFAutocomplete
-              name="securityQue"
-              label="Security Question *"
-              options={securityQuestions.map((question) => question.label)}
-              getOptionLabel={(option) => option}
-              isOptionEqualToValue={(option, value) => option === value}
-              disabled={!isEditable}
-              renderOption={(props, option) => {
-                const { label } = securityQuestions.filter(
-                  (question) => question.label === option
-                )[0];
-
-                if (!label) {
-                  return null;
-                }
-
-                return (
-                  <li {...props} key={label}>
-                    <Iconify key={label} width={28} sx={{ mr: 1 }} />
-                    {label}
-                  </li>
-                );
-              }}
+            <RHFTextField
+              name="addressOne"
+              label="Address Line 1 *"
+              disabled={!isEditable || lightEditable}
             />
             <RHFTextField
-              name="securityAns"
-              label="Answer of Security Question *"
-              disabled={!isEditable}
+              name="addressTwo"
+              label="Address Line 2"
+              disabled={!isEditable || lightEditable}
             />
+            <RHFTextField name="city" label="City *" disabled={!isEditable || lightEditable} />
+            <RHFTextField
+              name="state"
+              label="State/Region *"
+              disabled={!isEditable || lightEditable}
+            />
+            <RHFTextField
+              name="zipCode"
+              label="Zip/Code *"
+              disabled={!isEditable || lightEditable}
+            />
+            <RHFTextField name="pan" label="PAN Number *" disabled={!isEditable || lightEditable} />
+            {/* <Controller
+              name="phoneNumber"
+              control={control}
+              render={({ field }) => (
+                <TextField
+                  {...field}
+                  fullWidth
+                  disabled
+                  // disabled={!isEditable}
+                  label="Phone Number"
+                  type="number"
+                  error={!!errors.phoneNumber}
+                  helperText={errors.phoneNumber?.message}
+                  InputProps={{
+                    startAdornment: <InputAdornment position="start">+91</InputAdornment>,
+                  }}
+                  placeholder="Enter 10 digit mobile number"
+                />
+              )}
+            /> */}
+            <Controller
+              name="alternatePhone"
+              control={control}
+              render={({ field }) => (
+                <TextField
+                  {...field}
+                  fullWidth
+                  type="number"
+                  disabled={!isEditable || lightEditable}
+                  label="Alternate Phone Number"
+                  error={!!errors.alternatePhone}
+                  helperText={errors.alternatePhone?.message}
+                  InputProps={{
+                    startAdornment: <InputAdornment position="start">+91</InputAdornment>,
+                  }}
+                  placeholder="Enter 10 digit mobile number"
+                />
+              )}
+            />
+            <RHFTextField name="email" label="Email *" disabled={!isEditable || lightEditable} />
           </Box>
 
           <Stack alignItems="flex-end" sx={{ mt: 3 }}>
             {isEditable ? (
               <Stack direction="row" spacing={2}>
-                <Button variant="outlined" onClick={handleCancel}>
+                <LoadingButton
+                  onClick={handleCancel}
+                  variant="contained"
+                  loading={submitProfile.isLoading}
+                >
                   Cancel
-                </Button>
-                <LoadingButton type="submit" variant="contained" loading={isSubmitting}>
-                  {currentUser ? 'Save Changes' : 'Submit'}
+                </LoadingButton>
+                <LoadingButton type="submit" variant="contained" loading={submitProfile.isLoading}>
+                  Submit
                 </LoadingButton>
               </Stack>
             ) : null}
@@ -175,7 +276,3 @@ export default function UserForm({ currentUser }) {
     </FormProvider>
   );
 }
-
-UserForm.propTypes = {
-  currentUser: PropTypes.object,
-};

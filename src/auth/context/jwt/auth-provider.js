@@ -3,15 +3,17 @@ import { useEffect, useReducer, useCallback, useMemo } from 'react';
 // utils
 import axios, { endpoints } from 'src/utils/axios';
 //
-import { AuthContext } from './auth-context';
-import { getSession, setImpersonateSession, setLocalSession } from './utils';
 import { getStatus } from 'src/queries/auth';
+import { AuthContext } from './auth-context';
+import { checkImpersonate, getSession, setImpersonateSession, setLocalSession } from './utils';
 
 const initialState = {
   user: null,
   loading: true,
   isKYC: false,
   isBank: false,
+  user_role: 'Individual',
+  phoneNumber: '',
 };
 
 const reducer = (state, action) => {
@@ -21,6 +23,8 @@ const reducer = (state, action) => {
       user: action.payload.userId,
       isKYC: action.payload.isKYC,
       isBank: action.payload.isBank,
+      user_role: action.payload.user_role,
+      phoneNumber: action.payload.phoneNumber,
     };
   }
   if (action.type === 'LOGIN') {
@@ -60,7 +64,8 @@ export function AuthProvider({ children }) {
 
       if (userId) {
         const response = await getStatus(userId);
-        const { is_KYC, is_BankDetailsExists, user } = response;
+        const { is_KYC, is_BankDetailsExists, user, user_role, phone } = response;
+        console.log('response main: ', response);
         setLocalSession({ userId });
         dispatch({
           type: 'INITIAL',
@@ -68,6 +73,8 @@ export function AuthProvider({ children }) {
             userId,
             isKYC: is_KYC,
             isBank: is_BankDetailsExists,
+            user_role,
+            phoneNumber: phone,
           },
         });
       } else {
@@ -89,9 +96,24 @@ export function AuthProvider({ children }) {
     }
   }, []);
 
+  const testDemo = useCallback(async (userId) => {
+    setLocalSession({ userId });
+    dispatch({
+      type: 'INITIAL',
+      payload: {
+        userId,
+        isKYC: true,
+        isBank: true,
+        user_role: 'Individual',
+        phoneNumber: '9016222140',
+      },
+    });
+  }, []);
+
   useEffect(() => {
     initialize();
   }, [initialize]);
+  // const kycComplete =
 
   // // LOGIN
   // const login = useCallback(async (email, password) => {
@@ -106,12 +128,12 @@ export function AuthProvider({ children }) {
 
   //   setSession({ accessToken, userId: 2 });
 
-  //   dispatch({
-  //     type: 'LOGIN',
-  //     payload: {
-  //       user,
-  //     },
-  //   });
+  // dispatch({
+  //   type: 'LOGIN',
+  //   payload: {
+  //     user,
+  //   },
+  // });
   // }, []);
 
   // // REGISTER
@@ -138,8 +160,9 @@ export function AuthProvider({ children }) {
   // }, []);
 
   // LOGOUT
-  const logout = useCallback(async ({ isImpersonateLogout }) => {
-    if (isImpersonateLogout) {
+  const logout = useCallback(async () => {
+    const isImpersonate = checkImpersonate();
+    if (isImpersonate) {
       setImpersonateSession({ userId: null });
     } else {
       setLocalSession({ userId: null });
@@ -178,12 +201,26 @@ export function AuthProvider({ children }) {
       unauthenticated: status === 'unauthenticated',
       isKYC: state.isKYC,
       isBank: state.isBank,
+      user_role: state.user_role,
+      phoneNumber: state.phoneNumber,
+      testDemo,
       //
       // login,
       // register,
       logout,
+      initialize,
     }),
-    [logout, state.user, status]
+    [
+      state.phoneNumber,
+      testDemo,
+      initialize,
+      logout,
+      state.user,
+      status,
+      state.isKYC,
+      state.isBank,
+      state.user_role,
+    ]
   );
 
   return <AuthContext.Provider value={memoizedValue}>{children}</AuthContext.Provider>;

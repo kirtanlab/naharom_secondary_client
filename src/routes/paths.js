@@ -25,7 +25,7 @@ export const paths = {
   },
   // DASHBOARD
   dashboard: {
-    root: ROOTS.DASHBOARD,
+    root: `${ROOTS.DASHBOARD}/Auction`,
     one: `${ROOTS.DASHBOARD}/one`,
     Auction: `${ROOTS.DASHBOARD}/Auction`,
     ContractMgt: `${ROOTS.DASHBOARD}/ContractMgt`,

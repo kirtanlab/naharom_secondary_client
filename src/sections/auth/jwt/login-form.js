@@ -18,6 +18,7 @@ import {
   FormHelperText,
   styled,
 } from '@mui/material';
+import { useAuthContext } from 'src/auth/hooks';
 
 const schema = Yup.object().shape({
   loginType: Yup.string().required('Please select a login type'),
@@ -65,11 +66,11 @@ export default function LoginForm({ onSubmit }) {
   } = useForm({
     resolver: yupResolver(schema),
     defaultValues: {
-      loginType: 'individual',
+      loginType: 'Individual',
       mobileNumber: '',
     },
   });
-
+  const { testDemo } = useAuthContext();
   const onSubmitForm = (data) => {
     onSubmit(data);
   };
@@ -92,12 +93,12 @@ export default function LoginForm({ onSubmit }) {
             render={({ field }) => (
               <StyledRadioGroup {...field} row>
                 <StyledFormControlLabel
-                  value="individual"
+                  value="Individual"
                   control={<Radio size="medium" />}
                   label="Individual"
                 />
                 <StyledFormControlLabel
-                  value="company"
+                  value="Company"
                   control={<Radio size="medium" />}
                   label="Company"
                 />
@@ -135,6 +136,19 @@ export default function LoginForm({ onSubmit }) {
           sx={{ mt: 3 }}
         >
           Continue
+        </Button>
+        <Button
+          variant="contained"
+          color="primary"
+          size="large"
+          fullWidth
+          onClick={() => {
+            testDemo(5);
+            window.location.reload();
+          }}
+          sx={{ mt: 3 }}
+        >
+          Developer Entry
         </Button>
       </form>
     </Box>
