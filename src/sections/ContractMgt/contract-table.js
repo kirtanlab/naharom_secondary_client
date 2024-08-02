@@ -29,10 +29,14 @@ import Iconify from 'src/components/iconify';
 import Scrollbar from 'src/components/scrollbar';
 import ContractTableRow from './contract-table-row';
 //
-export default function ContractTable({ TABLE_HEAD, tableData }) {
+export default function ContractTable({
+  TABLE_HEAD_FRACTIONALIZED,
+  TABLE_HEAD_NON_FRACTIONALIZED,
+  tableData,
+}) {
   const defaultFilters = {
     search: '',
-    type: 'all',
+    type: 'unfractionalized',
   };
   const theme = useTheme();
   const table = useTable({ defaultOrderBy: 'Invoice_id' });
@@ -50,16 +54,16 @@ export default function ContractTable({ TABLE_HEAD, tableData }) {
   const notFound = (!dataFiltered.length && canReset) || !dataFiltered.length;
   const getInvoiceLength = (type) => tableData.filter((item) => item.type === type).length;
   const TABS = [
-    { value: 'all', label: 'All', color: 'default', count: tableData.length },
+    // { value: 'all', label: 'All', color: 'default', count: tableData.length },
     {
       value: 'unfractionalized',
-      label: 'UnFractionalized',
+      label: 'Non Fractionalized',
       color: 'default',
       count: getInvoiceLength('unfractionalized'),
     },
     {
       value: 'fractionalized',
-      label: 'Fractionalized',
+      label: 'Posted For Sale',
       color: 'default',
       count: getInvoiceLength('fractionalized'),
     },
@@ -146,7 +150,11 @@ export default function ContractTable({ TABLE_HEAD, tableData }) {
           <Scrollbar>
             <Table>
               <TableHeadCustom
-                headLabel={TABLE_HEAD}
+                headLabel={
+                  filters.type === 'unfractionalized'
+                    ? TABLE_HEAD_NON_FRACTIONALIZED
+                    : TABLE_HEAD_FRACTIONALIZED
+                }
                 order={table.order}
                 orderBy={table.orderBy}
                 rowCount={dataFiltered.length}
@@ -167,6 +175,7 @@ export default function ContractTable({ TABLE_HEAD, tableData }) {
                       selected={table.selected.includes(row.id)}
                       onSelectRow={() => table.onSelectRow(row.id)}
                       confirm={confirm}
+                      filter={filters.type}
                     />
                   ))}
 
@@ -195,7 +204,8 @@ export default function ContractTable({ TABLE_HEAD, tableData }) {
 }
 
 ContractTable.propTypes = {
-  TABLE_HEAD: PropTypes.array,
+  TABLE_HEAD_FRACTIONALIZED: PropTypes.array,
+  TABLE_HEAD_NON_FRACTIONALIZED: PropTypes.array,
   tableData: PropTypes.array,
 };
 function applyFilter({ inputData, comparator, filters, dateError }) {

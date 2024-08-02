@@ -6,29 +6,35 @@ import { TableSkeleton, useTable } from 'src/components/table';
 import { useGetAllInvoices } from 'src/queries/invoices';
 import ContractTable from './contract-table';
 
-const TABLE_HEAD = [
+const TABLE_HEAD_FRACTIONALIZED = [
   { id: 'primary_invoice_id', label: 'Invoice id', align: 'center' },
-  { id: 'product_name', label: 'Name' },
-  { id: 'principle_amt', label: 'Total Loan Amount', align: 'center' },
+  { id: 'invoice_id', label: 'Secondary Invoice id', align: 'center' },
+  { id: 'post_for_saleID', label: 'Sale id', align: 'center' },
+  { id: 'product_name', label: 'Name', disableSort: true },
   { id: 'tenure_in_days', label: 'Loan Period (Days)', align: 'center' },
-  { id: 'no_of_partitions', label: 'Fractionalized Units', align: 'center' },
-  { id: 'principle_amt', label: 'Fractionalized Amount', align: 'center' },
-  // { id: 'timeLeft', label: 'Time Left' },
-  // { id: 'interest_rate', label: 'Interest Rate' },
-  // { id: 'interest', label: 'Interest fractional' }s,
-  { id: 'actions', label: 'Actions' },
-];
-const TABLE_HEAD_UNFRACTIONALIZED = [
-  { id: 'primary_invoice_id', label: 'Invoice id', align: 'center' },
-  { id: 'buyer_poc_name', label: 'Name' },
-  { id: 'principle_amt', label: 'Total Loan Amount', align: 'center' },
   { id: 'expiration_time', label: 'Expiration Date', align: 'center' },
+  { id: 'total_price', label: 'Total Sale Amount', align: 'center' },
+  { id: 'per_unit_price', label: 'Fractionalized Amount', align: 'center' },
+  { id: 'no_of_units', label: 'Total Fractionalized Units', align: 'center' },
+  { id: 'remaining_units', label: 'Remaining Fractionalized Units', align: 'center' },
+  { id: 'irr', label: 'IRR', align: 'center' },
+  { id: 'xirr', label: 'XIRR', align: 'center' },
+  { id: 'interest', label: 'Interest Rate', align: 'center' },
+  { id: 'from_date', label: 'Sale Start Date', align: 'center', width: 20 },
+  { id: 'to_date', label: 'Sale End Date', align: 'center' },
+  { id: 'actions', label: 'Actions', disableSort: true },
+];
+const TABLE_HEAD_NON_FRACTIONALIZED = [
+  { id: 'primary_invoice_id', label: 'Invoice id', align: 'center' },
+  { id: 'buyer_poc_name', label: 'Name', disableSort: true },
+  { id: 'tenure_in_days', label: 'Loan Tenure (Days)', align: 'center' },
+  { id: 'expiration_time', label: 'Expiration Date', align: 'center' },
+  { id: 'principle_amt', label: 'Total Loan Amount', align: 'center' },
+  { id: 'remaining_amt', label: 'Remaining Loan Amount', align: 'center' },
   { id: 'interest_rate', label: 'Interest Rate', align: 'center' },
   { id: 'irr', label: 'IRR', align: 'center' },
   { id: 'xirr', label: 'XIRR', align: 'center' },
-  { id: 'principle_amt', label: 'Remaining Loan Amount', align: 'center' },
-  { id: 'tenure_in_days', label: 'Loan Tenure (Days)', align: 'center' },
-  { id: 'actions', label: 'Actions' },
+  { id: 'actions', label: 'Actions', disableSort: true },
 ];
 
 export default function ContractMgtView() {
@@ -92,7 +98,11 @@ export default function ContractMgtView() {
           border: (theme) => `dashed 1px ${theme.palette.divider}`,
         }}
       /> */}
-        <ContractTable tableData={AllInvoices?.data} TABLE_HEAD={TABLE_HEAD} />
+        <ContractTable
+          tableData={AllInvoices?.data}
+          TABLE_HEAD_FRACTIONALIZED={TABLE_HEAD_FRACTIONALIZED}
+          TABLE_HEAD_NON_FRACTIONALIZED={TABLE_HEAD_NON_FRACTIONALIZED}
+        />
       </Grid>
     </Container>
   );

@@ -53,7 +53,7 @@ export default function TableHeadCustom({
             sortDirection={orderBy === headCell.id ? order : false}
             sx={{ width: headCell.width, minWidth: headCell.minWidth }}
           >
-            {onSort ? (
+            {onSort && !headCell.disableSort ? (
               <TableSortLabel
                 hideSortIcon
                 active={orderBy === headCell.id}
@@ -77,7 +77,6 @@ export default function TableHeadCustom({
     </TableHead>
   );
 }
-
 TableHeadCustom.propTypes = {
   sx: PropTypes.object,
   onSort: PropTypes.func,

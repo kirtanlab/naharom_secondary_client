@@ -3,7 +3,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { HOST_ADDRESS } from './host';
 //
 
-export const useGetAllUsers = (userId, timeoutMs = 10000) =>
+export const useGetAllUsers = ({ userId, timeoutMs = 10000 }) =>
   useQuery(
     ['AllUsers', userId],
     async () => {

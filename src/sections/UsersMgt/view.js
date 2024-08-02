@@ -21,14 +21,14 @@ export default function UserMgtView() {
   const settings = useSettingsContext();
   const table = useTable({ defaultOrderBy: 'timeLeft' });
   const denseHeight = table.dense ? 56 : 76;
-  const { userId } = getSession();
+  const { user } = useAuthContext();
   const {
     data: AllUsers,
     error: AllUsersError,
     isLoading: AllUserLoading,
     isSuccess: AllUsersSuccess,
     isError: AllUsersIsError,
-  } = useGetAllUsers(userId);
+  } = useGetAllUsers({ userId: user });
 
   if (AllUserLoading || AllUsers?.data?.length === 0) {
     return (

@@ -1,28 +1,23 @@
 import React, { useState } from 'react';
 import {
   Box,
-  Drawer,
   List,
   ListItem,
   ListItemText,
   Collapse,
   IconButton,
   Typography,
+  Divider,
 } from '@mui/material';
-import { ExpandLess, ExpandMore, ChevronLeft, ChevronRight } from '@mui/icons-material';
-
-const drawerWidth = 240;
+import { ExpandLess, ExpandMore } from '@mui/icons-material';
 
 function InvoiceModel() {
-  const [open, setOpen] = useState(true);
   const [selectedMenu, setSelectedMenu] = useState(null);
+  const [subMenu, setSubMenu] = useState(null);
   const [openSubMenu, setOpenSubMenu] = useState({});
 
-  const handleDrawerToggle = () => {
-    setOpen(!open);
-  };
-
   const handleMenuClick = (menu) => {
+    console.log('handleMenuClick: ', menu);
     setSelectedMenu(menu);
     setOpenSubMenu({ ...openSubMenu, [menu]: !openSubMenu[menu] });
   };
@@ -34,67 +29,43 @@ function InvoiceModel() {
   ];
 
   return (
-    <Box sx={{ display: 'flex' }}>
-      <Drawer
-        variant="persistent"
-        anchor="left"
-        open={open}
-        sx={{
-          width: open ? drawerWidth : 0,
-          flexShrink: 0,
-          '& .MuiDrawer-paper': {
-            width: drawerWidth,
-            boxSizing: 'border-box',
-          },
-        }}
-      >
-        <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', p: 1 }}>
-          <IconButton onClick={handleDrawerToggle}>
-            {open ? <ChevronLeft /> : <ChevronRight />}
-          </IconButton>
+    <Box sx={{ display: 'flex', flexDirection: 'column', height: '100vh', maxHeight: '100%' }}>
+      <Box sx={{ display: 'flex', flexGrow: 1, overflow: 'hidden' }}>
+        <Box sx={{ width: 200, borderRight: 1, borderColor: 'divider', overflowY: 'auto' }}>
+          <List>
+            {menuItems.map((item) => (
+              <React.Fragment key={item.name}>
+                <ListItem onClick={() => handleMenuClick(item.name)}>
+                  <ListItemText primaryTypographyProps={{ fontSize: 17 }} primary={item.name} />
+                  {openSubMenu[item.name] ? <ExpandLess /> : <ExpandMore />}
+                </ListItem>
+                <Collapse in={openSubMenu[item.name]} timeout="auto" unmountOnExit>
+                  <List component="div" disablePadding>
+                    {item.subMenus.map((_subMenu) => (
+                      <ListItem sx={{ pl: 4 }} key={_subMenu} onClick={() => setSubMenu(_subMenu)}>
+                        <ListItemText
+                          primaryTypographyProps={{ fontSize: 15 }}
+                          primary={_subMenu}
+                        />
+                      </ListItem>
+                    ))}
+                  </List>
+                </Collapse>
+                <Divider sx={{ width: 2 }} />
+              </React.Fragment>
+            ))}
+          </List>
         </Box>
-        <List>
-          {menuItems.map((item) => (
-            <React.Fragment key={item.name}>
-              <ListItem button onClick={() => handleMenuClick(item.name)}>
-                <ListItemText primary={item.name} />
-                {openSubMenu[item.name] ? <ExpandLess /> : <ExpandMore />}
-              </ListItem>
-              <Collapse in={openSubMenu[item.name]} timeout="auto" unmountOnExit>
-                <List component="div" disablePadding>
-                  {item.subMenus.map((subMenu) => (
-                    <ListItem button sx={{ pl: 4 }} key={subMenu}>
-                      <ListItemText primary={subMenu} />
-                    </ListItem>
-                  ))}
-                </List>
-              </Collapse>
-            </React.Fragment>
-          ))}
-        </List>
-      </Drawer>
-      <Box
-        component="main"
-        sx={{
-          flexGrow: 1,
-          p: 3,
-          width: { sm: `calc(100% - ${open ? drawerWidth : 0}px)` },
-          marginLeft: open ? `${drawerWidth}px` : 0,
-          transition: (theme) =>
-            theme.transitions.create(['margin', 'width'], {
-              easing: theme.transitions.easing.sharp,
-              duration: theme.transitions.duration.leavingScreen,
-            }),
-        }}
-      >
-        <Typography variant="h4" gutterBottom>
-          {selectedMenu ? `${selectedMenu} Content` : 'Welcome'}
-        </Typography>
-        <Typography paragraph>
-          {selectedMenu
-            ? `This area will display data or graphs related to ${selectedMenu}.`
-            : 'Select a menu item to view its content.'}
-        </Typography>
+        <Box sx={{ flexGrow: 1, p: 3, overflowY: 'auto' }}>
+          <Typography variant="h4" gutterBottom>
+            {selectedMenu ? `${selectedMenu} Content` : 'Welcome'}
+          </Typography>
+          <Typography paragraph>
+            {selectedMenu
+              ? `This area will display data or graphs related to ${subMenu ?? selectedMenu}.`
+              : 'Select a menu item to view its content.'}
+          </Typography>
+        </Box>
       </Box>
     </Box>
   );
