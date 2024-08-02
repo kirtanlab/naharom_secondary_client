@@ -44,11 +44,12 @@ export default function App() {
   useScrollToTop();
   const _queryClient = new QueryClient({
     defaultOptions: {
-      cacheTime: 60 * seconds,
-      staleTime: 60 * seconds,
-      refetchOnWindowFocus: false,
-      refetchOnMount: false,
-      retry: true,
+      queries: {
+        cacheTime: 1000 * 60 * 10, // Cache for 10 minutes
+        staleTime: Infinity, // Consider fresh for 5 minutes
+        refetchOnReconnect: false,
+        refetchOnWindowFocus: false,
+      },
     },
   });
   return (
@@ -79,6 +80,7 @@ export default function App() {
           </SettingsProvider>
         </LocalizationProvider>
       </AuthProvider>
+      <ReactQueryDevtools initialIsOpen={false} />
     </QueryClientProvider>
   );
 }

@@ -59,7 +59,7 @@ export function AuthProvider({ children }) {
 
   const initialize = useCallback(async () => {
     try {
-      const { userId } = getSession();
+      const { userId } = await getSession();
       console.log(userId);
 
       if (userId) {

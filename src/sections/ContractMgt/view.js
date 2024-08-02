@@ -1,3 +1,4 @@
+import { useAuthContext } from 'src/auth/hooks';
 import { Alert, Container, Grid, Typography, AlertTitle } from '@mui/material';
 import { DataGrid } from '@mui/x-data-grid';
 import { useSettingsContext } from 'src/components/settings';
@@ -19,15 +20,14 @@ const TABLE_HEAD = [
 ];
 const TABLE_HEAD_UNFRACTIONALIZED = [
   { id: 'primary_invoice_id', label: 'Invoice id', align: 'center' },
-  { id: 'product_name', label: 'Name' },
+  { id: 'buyer_poc_name', label: 'Name' },
   { id: 'principle_amt', label: 'Total Loan Amount', align: 'center' },
+  { id: 'expiration_time', label: 'Expiration Date', align: 'center' },
+  { id: 'interest_rate', label: 'Interest Rate', align: 'center' },
+  { id: 'irr', label: 'IRR', align: 'center' },
+  { id: 'xirr', label: 'XIRR', align: 'center' },
   { id: 'principle_amt', label: 'Remaining Loan Amount', align: 'center' },
-  { id: 'tenure_in_days', label: 'Loan Period (Days)', align: 'center' },
-  { id: 'no_of_partitions', label: 'Fractionalized Units', align: 'center' },
-  { id: 'principle_amt', label: 'Fractionalized Amount', align: 'center' },
-  // { id: 'timeLeft', label: 'Time Left' },
-  // { id: 'interest_rate', label: 'Interest Rate' },
-  // { id: 'interest', label: 'Interest fractional' }s,
+  { id: 'tenure_in_days', label: 'Loan Tenure (Days)', align: 'center' },
   { id: 'actions', label: 'Actions' },
 ];
 
@@ -35,12 +35,13 @@ export default function ContractMgtView() {
   const settings = useSettingsContext();
   const table = useTable({ defaultOrderBy: 'timeLeft' });
   const denseHeight = table.dense ? 56 : 76;
+  const { user: userId } = useAuthContext();
   const {
     data: AllInvoices,
     error: AllInvoicesError,
     isError: AllInvoiceIsError,
     isLoading: AllInvoicesIsLoading,
-  } = useGetAllInvoices();
+  } = useGetAllInvoices({ userId });
   if (AllInvoicesIsLoading || AllInvoices?.data?.length === 0) {
     return (
       <>
@@ -55,7 +56,7 @@ export default function ContractMgtView() {
       </>
     );
   }
-  if (AllInvoiceIsError || AllInvoices === undefined) {
+  if (AllInvoiceIsError || !AllInvoices.data) {
     console.log('in error!');
 
     return (
@@ -91,7 +92,7 @@ export default function ContractMgtView() {
           border: (theme) => `dashed 1px ${theme.palette.divider}`,
         }}
       /> */}
-        <ContractTable tableData={AllInvoices} TABLE_HEAD={TABLE_HEAD} />
+        <ContractTable tableData={AllInvoices?.data} TABLE_HEAD={TABLE_HEAD} />
       </Grid>
     </Container>
   );

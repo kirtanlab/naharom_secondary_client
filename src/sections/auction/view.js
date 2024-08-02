@@ -21,6 +21,7 @@ import {
   Alert,
   AlertTitle,
 } from '@mui/material';
+import { useAuthContext } from 'src/auth/hooks';
 import Scrollbar from 'src/components/scrollbar';
 import Label from 'src/components/label';
 import { useBoolean } from 'src/hooks/use-boolean';
@@ -49,7 +50,7 @@ const TABLE_HEAD = [
 
 export default function AuctionView() {
   const settings = useSettingsContext();
-  const userId = 2;
+  const { user: userId } = useAuthContext();
   const table = useTable({ defaultOrderBy: 'timeLeft' });
 
   const {
@@ -59,7 +60,7 @@ export default function AuctionView() {
     isSuccess: AllInvoiceIsSuccess,
     isError: AllInvoiceIsError,
     status,
-  } = useGetAllInvoicesById(userId);
+  } = useGetAllInvoicesById({ userId });
   const denseHeight = table.dense ? 56 : 76;
   if (AllInvoiceIsLoading || AllInvoiceData?.data?.length === 0) {
     return (

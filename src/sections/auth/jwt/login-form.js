@@ -143,7 +143,7 @@ export default function LoginForm({ onSubmit }) {
           size="large"
           fullWidth
           onClick={() => {
-            testDemo(5);
+            testDemo(2);
             window.location.reload();
           }}
           sx={{ mt: 3 }}

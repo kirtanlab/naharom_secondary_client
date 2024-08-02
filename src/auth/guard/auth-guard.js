@@ -22,11 +22,11 @@ export default function AuthGuard({ children }) {
   const [checked, setChecked] = useState(false);
 
   const check = useCallback(() => {
+    const searchParams = new URLSearchParams({
+      returnTo: window.location.pathname,
+    }).toString();
+    console.log('searchParams: ', searchParams);
     if (!authenticated) {
-      const searchParams = new URLSearchParams({
-        returnTo: window.location.pathname,
-      }).toString();
-
       const loginPath = loginPaths[method];
 
       const href = `${loginPath}?${searchParams}`;
@@ -41,7 +41,10 @@ export default function AuthGuard({ children }) {
         router.replace(paths.profile.company);
       }
     } else if (authenticated && isKYC) {
-      router.replace(paths.dashboard.root);
+      const decodedPath = decodeURIComponent(window.location.pathname ?? paths.dashboard.root);
+      console.log('Redirecting to:', decodedPath);
+
+      router.replace(decodedPath);
       setChecked(true);
     }
     // } else if (authenticated && !isBank) {

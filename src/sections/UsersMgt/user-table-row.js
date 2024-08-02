@@ -24,14 +24,14 @@ const { useBoolean } = require('src/hooks/use-boolean');
 
 const UserTableRow = ({ row, selected, onSelectRow, table, confirm }) => {
   const popover = usePopover();
-  const { accessToken } = getSession();
+  console.log('row in UserMgtL ', row);
   async function handleImpersonate(userId) {
     if (!userId) {
       alert('Something went wrong');
       return;
     }
     const newTab = window.open('about:blank', '_blank');
-    console.log('setting UserId: ', row?.user_id, accessToken);
+    console.log('setting UserId: ', row?.user);
     newTab.document.write(`
     <html>
       <head>
@@ -41,8 +41,8 @@ const UserTableRow = ({ row, selected, onSelectRow, table, confirm }) => {
         <h1>Logging in as impersonated user...</h1>
         <script>
         sessionStorage.setItem('isImpersonate', '${true}');
-          sessionStorage.setItem('accessToken', '${accessToken}');
-          sessionStorage.setItem('userId', '${row?.user_id}');
+
+          sessionStorage.setItem('ImpersonateUserId', '${row?.user}');
         window.location.href = '/dashboard?impersonation=true';
         </script>
       </body>
@@ -132,7 +132,7 @@ const UserTableRow = ({ row, selected, onSelectRow, table, confirm }) => {
       </TableCell>
       <TableCell>
         <ListItemText
-          onClick={() => handleImpersonate(row?.user_id)}
+          onClick={() => handleImpersonate(row?.user)}
           primary="Impersonate"
           primaryTypographyProps={{
             typography: 'subtitle',
