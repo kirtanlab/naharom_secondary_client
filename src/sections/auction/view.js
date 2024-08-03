@@ -34,17 +34,46 @@ import AuctionTable from './auction-table';
 
 // import AllInvoiceData from '../../dummyData/data.json';
 // ----------------------------------------------------------------------
-const TABLE_HEAD = [
-  { id: 'Invoice_id', label: 'Invoice id', align: 'center' },
-  // { id: 'timeLeft', label: 'Time Left' },
-  { id: 'Invoice_expiration_time', label: 'Due Date' },
-  // { id: 'status', label: 'Status' },
-  { id: 'Invoice_remaining_partitions', label: 'Units for Sale' },
-  // { id: 'Invoice_principle_amt', label: 'Total Amount' },
-  { id: 'Invoice_interest', label: 'Interest fractional' },
-  // Time Left
-  { id: 'time_left', label: 'Time Left For Buy' },
-  { id: 'sell_type', label: 'Sell Type' },
+const TABLE_HEAD_BUY = [
+  { id: 'Invoice_primary_id', label: 'Primary Invoice id', align: 'center' },
+  { id: 'Invoice_id', label: 'Secondary Invoice id', align: 'center' },
+  { id: 'post_for_sellID', label: 'Sale ID', align: 'center' },
+  { id: 'Invoice_remaining_units', label: 'Units for sale', align: 'center' },
+  { id: 'Invoice_per_unit_price', label: 'Per Unit Price', align: 'center' },
+  { id: 'Invoice_total_price', label: 'Total Sale price', align: 'center' },
+  { id: 'Invoice_from_date', label: 'Sale Start Date', align: 'center' },
+  { id: 'Invoice_to_date', label: 'Sale End Date', align: 'center' },
+  { id: 'Invoice_expiration_time', label: 'Invoice Expiration Date', align: 'center' },
+  { id: 'Invoice_xirr', label: 'Annual Xirr' },
+  { id: 'actions', label: 'Actions' },
+];
+const TABLE_HEAD_SELL = [
+  { id: 'Invoice_primary_id', label: 'Primary Invoice id', align: 'center' },
+  { id: 'Invoice_id', label: 'Secondary Invoice id', align: 'center' },
+  { id: 'Invoice_name', label: 'Invoice Name', align: 'center' },
+  { id: 'Purchased_no_of_units', label: 'Total units bought' },
+  { id: 'Purchased_remaining_units', label: 'Remaining Units' },
+  { id: 'Purchased_per_unit_price', label: 'Per Unit Price' },
+  { id: 'Invoice_interest', label: 'Total Interest' },
+  { id: 'Invoice_xirr', label: 'Annual XIRR' },
+  { id: 'Invoice_irr', label: 'Annual IRR' },
+  { id: 'Invoice_expiration_time', label: 'Invoice Expiration Date', align: 'center' },
+  { id: 'actions', label: 'Actions' },
+];
+const TABLE_HEAD_POSTED_FOR_SALE = [
+  { id: 'Invoice_primary_id', label: 'Primary Invoice id', align: 'center' },
+  { id: 'Invoice_id', label: 'Secondary Invoice id', align: 'center' },
+  { id: 'post_for_sellID', label: 'Sale ID', align: 'center' },
+  { id: 'Posted_from_date', label: 'Start Sale Date' },
+  { id: 'Posted_to_date', label: 'End Sale Date' },
+  { id: 'Posted_no_of_units', label: 'Total Units in Sale' },
+  { id: 'Posted_remaining_units', label: 'Remaining Units in Sale' },
+  { id: 'Posted_per_unit_price', label: 'Per Unit Price' },
+  { id: 'Posted_total_price', label: 'Total Sale Amount' },
+  { id: 'Invoice_interest', label: 'Total Interest' },
+  { id: 'Invoice_xirr', label: 'Annual XIRR' },
+  { id: 'Invoice_irr', label: 'Annual IRR' },
+  { id: 'Invoice_expiration_time', label: 'Invoice Expiration Date', align: 'center' },
   { id: 'actions', label: 'Actions' },
 ];
 
@@ -60,9 +89,10 @@ export default function AuctionView() {
     isSuccess: AllInvoiceIsSuccess,
     isError: AllInvoiceIsError,
     status,
+    isRefetching,
   } = useGetAllInvoicesById({ userId });
   const denseHeight = table.dense ? 56 : 76;
-  if (AllInvoiceIsLoading || AllInvoiceData?.data?.length === 0) {
+  if (AllInvoiceIsLoading || isRefetching || AllInvoiceData?.data?.length === 0) {
     return (
       <>
         <Container maxWidth={settings.themeStretch ? false : 'xl'}>
@@ -111,7 +141,12 @@ export default function AuctionView() {
           border: (theme) => `dashed 1px ${theme.palette.divider}`,
         }}
       /> */}
-        <AuctionTable tableData={AllInvoiceData.invoices} TABLE_HEAD={TABLE_HEAD} />
+        <AuctionTable
+          tableData={AllInvoiceData.invoices}
+          TABLE_HEAD_BUY={TABLE_HEAD_BUY}
+          TABLE_HEAD_SELL={TABLE_HEAD_SELL}
+          TABLE_HEAD_POSTED_FOR_SALE={TABLE_HEAD_POSTED_FOR_SALE}
+        />
       </Grid>
     </Container>
   );

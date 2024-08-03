@@ -38,14 +38,19 @@ import { fDate } from 'src/utils/format-time';
 import Scrollbar from 'src/components/scrollbar';
 import Label from 'src/components/label';
 import { useBoolean } from 'src/hooks/use-boolean';
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 
 import AuctionTableToolbar from './auction-table-toolbar';
 import AuctionTableRow from './auction-table-row';
 
 //
 
-export default function AuctionTable({ TABLE_HEAD, tableData }) {
+export default function AuctionTable({
+  TABLE_HEAD_SELL,
+  TABLE_HEAD_BUY,
+  TABLE_HEAD_POSTED_FOR_SALE,
+  tableData,
+}) {
   function calculateIRRActual(invoiceData, salePrice) {
     try {
       const irr = invoiceData.Invoice_irr / 100;
@@ -139,10 +144,11 @@ export default function AuctionTable({ TABLE_HEAD, tableData }) {
   const settings = useSettingsContext();
   const theme = useTheme();
   const router = useRouter();
-  const table = useTable({ defaultOrderBy: 'timeLeft' });
+  const table = useTable({ defaultOrderBy: 'id' });
   const confirm = useBoolean();
 
   const [filters, setFilters] = useState(defaultFilters);
+  const [currentLabels, setCurrentLabels] = useState(TABLE_HEAD_BUY);
   const dateError =
     filters.startDate && filters.endDate
       ? filters.startDate.getTime() > filters.endDate.getTime()
@@ -172,10 +178,16 @@ export default function AuctionTable({ TABLE_HEAD, tableData }) {
       count: getInvoiceLength('CanBuy'),
     },
     {
-      value: 'brought',
+      value: 'Brought',
       label: 'Sell',
       color: 'default',
-      count: getInvoiceLength('brought'),
+      count: getInvoiceLength('Brought'),
+    },
+    {
+      value: 'PostedForSale',
+      label: 'Posted For Sale',
+      color: 'default',
+      count: getInvoiceLength('PostedForSale'),
     },
   ];
 
@@ -201,6 +213,16 @@ export default function AuctionTable({ TABLE_HEAD, tableData }) {
     },
     [handleFilters]
   );
+
+  useEffect(() => {
+    if (filters.type === 'CanBuy') {
+      setCurrentLabels(TABLE_HEAD_BUY);
+    } else if (filters.type === 'Brought') {
+      setCurrentLabels(TABLE_HEAD_SELL);
+    } else {
+      setCurrentLabels(TABLE_HEAD_POSTED_FOR_SALE);
+    }
+  }, [filters.type, TABLE_HEAD_BUY, TABLE_HEAD_SELL, TABLE_HEAD_POSTED_FOR_SALE]);
   // const handleResetFilters = useCallback(() => {
   //   setFilters(defaultFilters);
   // }, [defaultFilters]);
@@ -284,7 +306,7 @@ export default function AuctionTable({ TABLE_HEAD, tableData }) {
           <Scrollbar>
             <Table>
               <TableHeadCustom
-                headLabel={TABLE_HEAD}
+                headLabel={currentLabels}
                 order={table.order}
                 orderBy={table.orderBy}
                 rowCount={dataFiltered.length}
@@ -305,12 +327,12 @@ export default function AuctionTable({ TABLE_HEAD, tableData }) {
                   )
                   .map((row) => (
                     <AuctionTableRow
-                      key={row.id}
                       row={row}
                       table={table}
                       selected={table.selected.includes(row.id)}
                       onSelectRow={() => table.onSelectRow(row.id)}
                       confirm={confirm}
+                      filter={filters.type}
                     />
                   ))}
                 <TableEmptyRows
@@ -339,7 +361,9 @@ export default function AuctionTable({ TABLE_HEAD, tableData }) {
 }
 
 AuctionTable.propTypes = {
-  TABLE_HEAD: PropTypes.array,
+  TABLE_HEAD_SELL: PropTypes.array,
+  TABLE_HEAD_BUY: PropTypes.array,
+  TABLE_HEAD_POSTED_FOR_SALE: PropTypes.array,
   tableData: PropTypes.array,
 };
 
@@ -353,6 +377,7 @@ function applyFilter({ inputData, comparator, filters, dateError }) {
   });
   inputData = stabilizedThis.map((el) => el[0]);
   if (type !== 'all') {
+    console.log('inputData: ', type);
     inputData = inputData.filter((invoice) => invoice?.type === type);
   }
   if (uniqueId) {

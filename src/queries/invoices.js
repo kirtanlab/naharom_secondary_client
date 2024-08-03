@@ -32,6 +32,55 @@ export const useGetAllInvoices = ({ userId, timeoutMs = 10000 }) =>
       refetchInterval: false,
       refetchOnWindowFocus: false,
       cacheTime: 1000 * 60 * 10, // Cache the data for 10 minutes
-      staleTime: 1000 * 60 * 5, // Consider data fresh for 5 minutes
+      staleTime: 0, // Consider data stale immediately
     }
   );
+
+export const usePostInvoice = ({ userId, timeoutMs = 10000 }) => {
+  const queryClient = useQueryClient();
+
+  const mutation = useMutation(
+    async (data) => {
+      const source = axios.CancelToken.source();
+      const timeoutId = setTimeout(() => {
+        source.cancel('Request timed out');
+      }, timeoutMs);
+
+      try {
+        const response = await axios.post(`${HOST_ADDRESS}/appAdmin/PostInvoice/`, data, {
+          cancelToken: source.token,
+        });
+        clearTimeout(timeoutId);
+        return response.data;
+      } catch (error) {
+        clearTimeout(timeoutId);
+        if (axios.isCancel(error)) {
+          throw new Error('Request timed out');
+        }
+        throw error;
+      }
+    },
+    //  {
+    //   onMutate: async (newInvoice) => {
+    //     await queryClient.cancelQueries(['AllInvoices', userId]);
+    //     const previousInvoices = queryClient.getQueryData(['AllInvoices', userId]);
+    //     queryClient.setQueryData(['AllInvoices', userId], (old) => [...old, newInvoice]);
+    //     return { previousInvoices };
+    //   },
+    //   onError: (err, newInvoice, context) => {
+    //     queryClient.setQueryData(['AllInvoices', userId], context.previousInvoices);
+    //   },
+    //   onSettled: () => {
+    //     queryClient.invalidateQueries(['AllInvoices', userId]);
+    //   },
+    // }
+    {
+      onSuccess: () => {
+        // Invalidate the specific query
+        queryClient.invalidateQueries(['AllInvoices', userId]);
+      },
+    }
+  );
+
+  return mutation;
+};

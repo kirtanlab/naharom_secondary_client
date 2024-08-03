@@ -86,7 +86,8 @@ const OTPVerification = () => {
           color: 'success',
           anchorOrigin: { vertical: 'top', horizontal: 'center' },
         });
-        setLocalSession({ userId: res_data.user_id });
+        setLocalSession({ userId: res_data.user });
+        window.location.reload();
         // if (loginType === 'individual') {
         //   navigate(`${paths.profile.user}`, {
         //     state: {

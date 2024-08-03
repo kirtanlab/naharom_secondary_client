@@ -5,7 +5,7 @@ import TextField from '@mui/material/TextField';
 
 // ----------------------------------------------------------------------
 
-export default function RHFTextField({ name, helperText, type, ...other }) {
+export default function RHFTextField({ name, helperText, type, disabled = false, ...other }) {
   const { control } = useFormContext();
 
   return (
@@ -16,6 +16,7 @@ export default function RHFTextField({ name, helperText, type, ...other }) {
         <TextField
           {...field}
           fullWidth
+          disabled={disabled}
           // variant="standard"
           // color="primary"
           type={type}
@@ -30,6 +31,9 @@ export default function RHFTextField({ name, helperText, type, ...other }) {
           error={!!error}
           helperText={error ? error?.message : helperText}
           {...other}
+          InputLabelProps={{
+            shrink: !!field.value,
+          }}
         />
       )}
     />
@@ -40,4 +44,5 @@ RHFTextField.propTypes = {
   helperText: PropTypes.object,
   name: PropTypes.string,
   type: PropTypes.string,
+  disabled: PropTypes.bool,
 };

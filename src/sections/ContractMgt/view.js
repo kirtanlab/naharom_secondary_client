@@ -47,8 +47,11 @@ export default function ContractMgtView() {
     error: AllInvoicesError,
     isError: AllInvoiceIsError,
     isLoading: AllInvoicesIsLoading,
+    status,
+    isRefetching,
   } = useGetAllInvoices({ userId });
-  if (AllInvoicesIsLoading || AllInvoices?.data?.length === 0) {
+  console.log('AllInvoicesIsLoading: ', status, isRefetching);
+  if (AllInvoicesIsLoading || isRefetching || AllInvoices?.data?.length === 0) {
     return (
       <>
         <Container maxWidth={settings.themeStretch ? false : 'xl'}>

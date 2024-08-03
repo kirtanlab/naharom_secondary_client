@@ -169,7 +169,7 @@ export default function ContractTable({
                   )
                   .map((row) => (
                     <ContractTableRow
-                      key={row.id}
+                      // key={row.id}
                       row={row}
                       table={table}
                       selected={table.selected.includes(row.id)}
