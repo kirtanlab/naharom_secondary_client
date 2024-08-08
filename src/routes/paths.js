@@ -31,5 +31,6 @@ export const paths = {
     ContractMgt: `${ROOTS.DASHBOARD}/ContractMgt`,
     UsersMgt: `${ROOTS.DASHBOARD}/UsersMgt`,
     Profile: `${ROOTS.DASHBOARD}/Profile`,
+    UserLedger: `${ROOTS.DASHBOARD}/UserLedger`,
   },
 };

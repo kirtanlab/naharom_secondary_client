@@ -17,27 +17,12 @@ import { useAuthContext } from 'src/auth/hooks';
 // components
 import { varHover } from 'src/components/animate';
 import CustomPopover, { usePopover } from 'src/components/custom-popover';
+import Iconify from 'src/components/iconify';
+import { WalletOutlined, WalletRounded, WalletSharp, WalletTwoTone } from '@mui/icons-material';
 
 // ----------------------------------------------------------------------
 
-const OPTIONS = [
-  {
-    label: 'Home',
-    linkTo: '/',
-  },
-  {
-    label: 'Profile',
-    linkTo: '/#1',
-  },
-  {
-    label: 'Settings',
-    linkTo: '/#2',
-  },
-];
-
-// ----------------------------------------------------------------------
-
-export default function AccountPopover() {
+export default function LedgerPopover() {
   const router = useRouter();
 
   const { logout, user, phoneNumber, user_role } = useAuthContext();
@@ -66,36 +51,50 @@ export default function AccountPopover() {
         whileTap="tap"
         whileHover="hover"
         variants={varHover(1.05)}
-        onClick={popover.onOpen}
+        onClick={ledgerPopover.onOpen}
         sx={{
           width: 40,
           height: 40,
           background: (theme) => alpha(theme.palette.grey[500], 0.08),
-          ...(popover.open && {
+          borderRadius: '50%', // Make the button fully round
+          ...(ledgerPopover.open && {
             background: (theme) =>
               `linear-gradient(135deg, ${theme.palette.primary.light} 0%, ${theme.palette.primary.main} 100%)`,
           }),
         }}
       >
         <Avatar
-          // src={user?.photoURL}
-          // alt={user?.displayName}
           sx={{
             width: 36,
             height: 36,
-            border: (theme) => `solid 2px ${theme.palette.background.default}`,
+            border: (theme) => `solid 1px ${theme.palette.background.default}`,
           }}
-        />
-      </IconButton>
+        >
+          <WalletTwoTone
+            sx={{
+              // background: 'gray',
+              // backgroundColor: (theme) => theme.palette.grey[400],
+              color: (theme) => 'white',
 
-      <CustomPopover open={popover.open} onClose={popover.onClose} sx={{ width: 200, p: 0 }}>
+              width: 24,
+              height: 24,
+              borderRadius: '50%',
+            }}
+          />
+        </Avatar>
+      </IconButton>
+      <CustomPopover
+        open={ledgerPopover.open}
+        onClose={ledgerPopover.onClose}
+        sx={{ width: 140, p: 0 }}
+      >
         <Box sx={{ p: 2, pb: 1.5 }}>
           <Typography variant="subtitle2" noWrap>
-            Mobile: +91{phoneNumber}
+            Balance: 1231 &#x20b9;
           </Typography>
         </Box>
 
-        <Divider sx={{ borderStyle: 'dashed' }} />
+        <Divider sx={{ borderStyle: 'solid ' }} />
 
         {/* <Stack sx={{ p: 1 }}>
           {OPTIONS.map((option) => (
@@ -111,7 +110,14 @@ export default function AccountPopover() {
           onClick={handleLogout}
           sx={{ m: 1, fontWeight: 'fontWeightBold', color: 'error.main' }}
         >
-          Logout
+          Withdraw Money
+        </MenuItem>
+        <Divider sx={{ borderStyle: 'solid ' }} />
+        <MenuItem
+          onClick={handleLogout}
+          sx={{ m: 1, fontWeight: 'fontWeightBold', color: 'error.main' }}
+        >
+          Credit Money
         </MenuItem>
       </CustomPopover>
     </>

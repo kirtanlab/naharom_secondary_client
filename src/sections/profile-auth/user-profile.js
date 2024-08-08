@@ -23,16 +23,17 @@ import { useAuthContext } from 'src/auth/hooks';
 
 export default function UserForm() {
   console.log('UserForm Entered');
-  const { userId } = getSession();
-  const { initialize } = useAuthContext();
-  console.log('userId: ', userId);
+  // const { userId } = getSession();
+  const { initialize, user: userId } = useAuthContext();
+  // console.log('userId: ', userId);
+
   const {
     data: fetchCurrentUser,
     error: IndividualError,
     isError: IndividualIsError,
     isSuccess: IndividualIsSuccess,
     isLoading: IndividualIsLoading,
-  } = useGetIndividualDetails(userId);
+  } = useGetIndividualDetails({ userId });
 
   const [isEditable, setIsEditable] = useState(false);
   const [lightEditable, setLightEditable] = useState(true);

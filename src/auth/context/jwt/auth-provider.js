@@ -14,6 +14,8 @@ const initialState = {
   isBank: false,
   user_role: 'Individual',
   phoneNumber: '',
+  is_admin: false,
+  is_superAdmin: false,
 };
 
 const reducer = (state, action) => {
@@ -25,6 +27,8 @@ const reducer = (state, action) => {
       isBank: action.payload.isBank,
       user_role: action.payload.user_role,
       phoneNumber: action.payload.phoneNumber,
+      is_admin: action.payload.is_admin,
+      is_superAdmin: action.payload.is_superAdmin,
     };
   }
   if (action.type === 'LOGIN') {
@@ -64,7 +68,9 @@ export function AuthProvider({ children }) {
 
       if (userId) {
         const response = await getStatus(userId);
-        const { is_KYC, is_BankDetailsExists, user, user_role, phone } = response;
+        const { is_KYC, is_BankDetailsExists, user, user_role, phone, is_admin, is_superAdmin } =
+          response;
+
         console.log('response main: ', response);
         setLocalSession({ userId });
         dispatch({
@@ -75,6 +81,8 @@ export function AuthProvider({ children }) {
             isBank: is_BankDetailsExists,
             user_role,
             phoneNumber: phone,
+            is_admin,
+            is_superAdmin,
           },
         });
       } else {

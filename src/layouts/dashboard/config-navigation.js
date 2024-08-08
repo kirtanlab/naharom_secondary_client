@@ -60,6 +60,11 @@ export function useNavData() {
             path: paths.dashboard.Profile,
             icon: ICONS.user,
           },
+          {
+            title: 'UserLedger',
+            path: paths.dashboard.UserLedger,
+            icon: ICONS.ecommerce,
+          },
         ],
       },
     ],

@@ -5,80 +5,60 @@ import {
   getComparator,
   TableHeadCustom,
   TableEmptyRows,
-  emptyRows,
   TableNoData,
   TablePaginationCustom,
+  emptyRows,
 } from 'src/components/table';
+import Iconify from 'src/components/iconify';
 import { useBoolean } from 'src/hooks/use-boolean';
 import { useCallback, useState } from 'react';
 import {
   Card,
-  Grid,
-  Tab,
-  Tabs,
-  TextField,
-  InputAdornment,
-  TableContainer,
-  Table,
-  TableBody,
-  Divider,
-  TablePagination,
   Checkbox,
+  Divider,
   FormControlLabel,
   FormGroup,
+  Grid,
+  InputAdornment,
+  Table,
+  TableBody,
+  TableContainer,
+  TextField,
 } from '@mui/material';
-import Label from 'src/components/label';
-import Iconify from 'src/components/iconify';
 import Scrollbar from 'src/components/scrollbar';
-import ContractTableRow from './contract-table-row';
+// import UserTableRow from './user-table-row';
+import LedgerTableRow from './ledger-table-row';
 
-export default function ContractTable({
-  TABLE_HEAD_FRACTIONALIZED,
-  TABLE_HEAD_NON_FRACTIONALIZED,
-  tableData,
-}) {
+//
+export default function LedgerTable({ TABLE_HEAD, tableData }) {
   const defaultFilters = {
-    search: '',
-    type: 'unfractionalized',
+    transaction_id: '',
+    type: 'buy',
+    source: '',
+    from_bank_acc: '',
+    to_bank_acc: '',
   };
+
   const theme = useTheme();
-  const table = useTable({ defaultOrderBy: 'Invoice_id' });
+  const table = useTable({ defaultOrderBy: 'time_date' });
   const confirm = useBoolean();
   const [filters, setFilters] = useState(defaultFilters);
-  const [visibleColumns, setVisibleColumns] = useState(
-    TABLE_HEAD_NON_FRACTIONALIZED.reduce((acc, column) => {
-      acc[column.id] = true;
-      return acc;
-    }, {})
-  );
-
   const dataFiltered = applyFilter({
     inputData: tableData,
     comparator: getComparator(table.order, table.orderBy),
     filters,
   });
-
   const denseHeight = table.dense ? 56 : 76;
   const canReset =
     !!filters.uniqueId || filters.type !== 'all' || (!!filters.startDate && !!filters.endDate);
   const notFound = (!dataFiltered.length && canReset) || !dataFiltered.length;
   const getInvoiceLength = (type) => tableData.filter((item) => item.type === type).length;
-
-  const TABS = [
-    {
-      value: 'unfractionalized',
-      label: 'Non Fractionalized',
-      color: 'default',
-      count: getInvoiceLength('unfractionalized'),
-    },
-    {
-      value: 'fractionalized',
-      label: 'Posted For Sale',
-      color: 'default',
-      count: getInvoiceLength('fractionalized'),
-    },
-  ];
-
+  const [visibleColumns, setVisibleColumns] = useState(
+    TABLE_HEAD.reduce((acc, column) => {
+      acc[column.id] = true;
+      return acc;
+    }, {})
+  );
   const handleFilters = useCallback(
     (name, value) => {
       table.onResetPage();
@@ -90,38 +70,18 @@ export default function ContractTable({
     [table]
   );
 
-  const handleFilterType = useCallback(
-    (event, newValue) => {
-      handleFilters('type', newValue);
-      // Reset visible columns when switching between fractionalized and non-fractionalized
-      const newTableHead =
-        newValue === 'fractionalized' ? TABLE_HEAD_FRACTIONALIZED : TABLE_HEAD_NON_FRACTIONALIZED;
-      setVisibleColumns(
-        newTableHead.reduce((acc, column) => {
-          acc[column.id] = true;
-          return acc;
-        }, {})
-      );
-    },
-    [handleFilters, TABLE_HEAD_FRACTIONALIZED, TABLE_HEAD_NON_FRACTIONALIZED]
-  );
-
-  const handleFilterSearch = useCallback(
+  const handleFilterName = useCallback(
     (event) => {
-      handleFilters('search', event.target.value);
+      handleFilters('name', event.target.value);
     },
     [handleFilters]
   );
-
   const handleToggleColumn = (columnId) => {
     setVisibleColumns((prev) => ({
       ...prev,
       [columnId]: !prev[columnId],
     }));
   };
-
-  const currentTableHead =
-    filters.type === 'unfractionalized' ? TABLE_HEAD_NON_FRACTIONALIZED : TABLE_HEAD_FRACTIONALIZED;
 
   return (
     <Card
@@ -136,41 +96,14 @@ export default function ContractTable({
         flexDirection="row"
         sx={{ paddingRight: 2, justifyContent: 'space-between' }}
       >
-        <Tabs
-          value={filters.type}
-          onChange={handleFilterType}
-          sx={{
-            px: 2,
-            boxShadow: `inset 0 -2px 0 0 ${alpha(theme.palette.grey[500], 0.08)}`,
-          }}
-        >
-          {TABS.map((tab) => (
-            <Tab
-              key={tab.value}
-              value={tab.value}
-              label={tab.label}
-              iconPosition="end"
-              icon={
-                <Label
-                  variant={
-                    ((tab.value === 'all' || tab.value === filters.status) && 'filled') || 'soft'
-                  }
-                  color={tab.color}
-                >
-                  {tab.count}
-                </Label>
-              }
-            />
-          ))}
-        </Tabs>
         <TextField
-          value={filters.search}
-          onChange={handleFilterSearch}
-          placeholder="Search Invoice id / name / Principle Amount ..."
+          value={filters.name}
+          onChange={handleFilterName}
+          placeholder="Search transaction Id / name / pan_no ..."
           InputProps={{
             startAdornment: (
               <InputAdornment position="start">
-                <Iconify icon="eva:search-fill" sx={{ color: 'text.disabled' }} />
+                <Iconify icon="eva:search-fill" sx={{}} />
               </InputAdornment>
             ),
           }}
@@ -178,7 +111,7 @@ export default function ContractTable({
         />
       </Grid>
       <FormGroup row sx={{ p: 2 }}>
-        {currentTableHead.map((column) => (
+        {TABLE_HEAD.map((column) => (
           <FormControlLabel
             key={column.id}
             control={
@@ -196,7 +129,7 @@ export default function ContractTable({
           <Scrollbar>
             <Table>
               <TableHeadCustom
-                headLabel={currentTableHead.filter((column) => visibleColumns[column.id])}
+                headLabel={TABLE_HEAD}
                 order={table.order}
                 orderBy={table.orderBy}
                 rowCount={dataFiltered.length}
@@ -210,24 +143,22 @@ export default function ContractTable({
                     table.page * table.rowsPerPage + table.rowsPerPage
                   )
                   .map((row) => (
-                    <ContractTableRow
-                      // key={row.id}
+                    <LedgerTableRow
+                      key={row.id}
                       row={row}
                       table={table}
                       selected={table.selected.includes(row.id)}
                       onSelectRow={() => table.onSelectRow(row.id)}
                       confirm={confirm}
-                      filter={filters.type}
                       visibleColumns={visibleColumns}
-                      TABLE_HEAD_NON_FRACTIONALIZED={TABLE_HEAD_NON_FRACTIONALIZED}
-                      TABLE_HEAD_FRACTIONALIZED={TABLE_HEAD_FRACTIONALIZED}
+                      TABLE_HEAD={TABLE_HEAD}
                     />
                   ))}
-
                 <TableEmptyRows
                   height={denseHeight}
                   emptyRows={emptyRows(table.page, table.rowsPerPage, dataFiltered.length)}
                 />
+
                 <TableNoData notFound={notFound} />
               </TableBody>
             </Table>
@@ -238,22 +169,23 @@ export default function ContractTable({
           count={dataFiltered.length}
           page={table.page}
           rowsPerPage={table.rowsPerPage}
-          dense={table.dense}
+          // dense={table.dense}
+          onPageChange={table.onChangePage}
           onRowsPerPageChange={table.onChangeRowsPerPage}
+          // onChangeDense={table.onChangeDense}
         />
       </Grid>
     </Card>
   );
 }
 
-ContractTable.propTypes = {
-  TABLE_HEAD_FRACTIONALIZED: PropTypes.array,
-  TABLE_HEAD_NON_FRACTIONALIZED: PropTypes.array,
+LedgerTable.propTypes = {
+  TABLE_HEAD: PropTypes.array,
   tableData: PropTypes.array,
 };
 
-function applyFilter({ inputData, comparator, filters }) {
-  const { search, type } = filters;
+function applyFilter({ inputData, comparator, filters, dateError }) {
+  const { name } = filters;
   const stabilizedThis = inputData.map((el, index) => [el, index]);
   stabilizedThis.sort((a, b) => {
     const order = comparator(a[0], b[0]);
@@ -261,19 +193,16 @@ function applyFilter({ inputData, comparator, filters }) {
     return a[1] - b[1];
   });
   inputData = stabilizedThis.map((el) => el[0]);
-  if (type !== 'all') {
-    inputData = inputData.filter((invoice) => invoice?.type === type);
-  }
-  if (search) {
+  if (name) {
     inputData = inputData.filter(
-      (invoice) =>
-        invoice?.name?.toLowerCase()?.indexOf(search.toLowerCase()) !== -1 ||
-        invoice?.product_name?.toLowerCase()?.indexOf(search.toLowerCase()) !== -1 ||
-        String(invoice?.Invoice_id || '')
-          .toLowerCase()
-          .indexOf(search.toLowerCase()) !== -1 ||
-        String(invoice?.principle_amt || '').indexOf(search.toLowerCase()) !== -1
+      (user) =>
+        user?.company_name?.toLowerCase()?.indexOf(name.toLowerCase()) !== -1 ||
+        user?.email?.toLowerCase()?.indexOf(name.toLowerCase()) !== -1 ||
+        user?.first_name?.toLowerCase()?.indexOf(name.toLowerCase()) !== -1 ||
+        user?.last_name?.toLowerCase()?.indexOf(name.toLowerCase()) !== -1 ||
+        user?.pan_no?.toLowerCase()?.indexOf(name.toLowerCase()) !== -1
     );
   }
+
   return inputData;
 }

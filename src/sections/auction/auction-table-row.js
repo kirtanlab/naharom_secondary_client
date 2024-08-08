@@ -8,6 +8,9 @@ import CustomDialog from 'src/components/Dialog/dialog';
 import { useState, useRef } from 'react';
 // import BuyIrrModel from './buy-irr-model';
 import InvoiceModel from '../InvoiceModel/view';
+import BuyModel from './buyModel';
+import SellModel from './sellModel';
+// import BuyIrrModel from './buy-irr-model';
 //
 const { useTheme } = require('@emotion/react');
 const {
@@ -23,13 +26,17 @@ const {
 } = require('@mui/material');
 const { usePopover } = require('src/components/custom-popover');
 const { useBoolean } = require('src/hooks/use-boolean');
-//
 
 //
 const AuctionTableRow = ({ filter, row, selected, onSelectRow, table, confirm }) => {
   const WithdrawConfirm = useBoolean();
   const [invoiceModel, setInvoiceModel] = useState(false);
   const anchorRef = useRef(null);
+  const [openBuyModel, setOpenBuyModel] = useState(false);
+  const [openSellModel, setSellModel] = useState(false);
+  // const [openCanBuyPopover, setOpenCanBuyPopover] = useState(false)
+  const CanBuyPopover = usePopover();
+  const BroughtPopover = usePopover();
   const popover = usePopover();
   console.log('Filter in Auction: ', filter);
   if (filter === 'CanBuy') {
@@ -159,10 +166,43 @@ const AuctionTableRow = ({ filter, row, selected, onSelectRow, table, confirm })
           />
         </TableCell>
         <TableCell sx={{ pr: 0 }} /** ACTIONS */>
-          <IconButton color={popover.open ? 'inherit' : 'default'} onClick={popover.onOpen}>
+          <IconButton
+            ref={anchorRef}
+            color={CanBuyPopover.open ? 'inherit' : 'default'}
+            onClick={CanBuyPopover.onOpen}
+          >
             <Iconify icon="eva:more-vertical-fill" />
           </IconButton>
         </TableCell>
+        <CustomPopover
+          open={CanBuyPopover.open}
+          onClose={CanBuyPopover.onClose}
+          anchorEl={anchorRef.current}
+          placement="bottom-end"
+          arrow="right-top"
+          sx={{
+            width: 'auto',
+            backgroundColor: '#e4e6ed',
+            '& .MuiPopover-arrow': {
+              color: 'black',
+            },
+          }}
+        >
+          <MenuItem onClick={() => setOpenBuyModel(true)}>
+            <Iconify icon="solar:eye-bold" />
+            Buy Deal
+          </MenuItem>
+        </CustomPopover>
+        <CustomDialog
+          openFlag={openBuyModel}
+          setonClose={() => {
+            setOpenBuyModel(false);
+            CanBuyPopover.onClose();
+          }}
+          placeHolder="Buy Deal"
+          component={<BuyModel row={row} />}
+          // }
+        />
       </TableRow>
     );
   }
@@ -293,10 +333,44 @@ const AuctionTableRow = ({ filter, row, selected, onSelectRow, table, confirm })
           />
         </TableCell>
         <TableCell sx={{ pr: 0 }} /** ACTIONS */>
-          <IconButton color={popover.open ? 'inherit' : 'default'} onClick={popover.onOpen}>
+          <IconButton
+            color={BroughtPopover.open ? 'inherit' : 'default'}
+            onClick={BroughtPopover.onOpen}
+            ref={anchorRef}
+          >
             <Iconify icon="eva:more-vertical-fill" />
           </IconButton>
         </TableCell>
+        <CustomPopover
+          open={BroughtPopover.open}
+          onClose={BroughtPopover.onClose}
+          anchorEl={anchorRef.current}
+          placement="bottom-end"
+          arrow="right-top"
+          sx={{
+            width: 'auto',
+            backgroundColor: '#e4e6ed',
+            '& .MuiPopover-arrow': {
+              color: 'black',
+            },
+          }}
+        >
+          <MenuItem onClick={() => setSellModel(true)}>
+            <Iconify icon="solar:eye-bold" />
+            Post for Sale
+          </MenuItem>
+        </CustomPopover>
+        <CustomDialog
+          openFlag={openSellModel}
+          mt={1}
+          setonClose={() => {
+            setSellModel(false);
+            BroughtPopover.onClose();
+          }}
+          placeHolder="Post for Sale"
+          component={<SellModel row={row} />}
+          // }
+        />
       </TableRow>
     );
   }

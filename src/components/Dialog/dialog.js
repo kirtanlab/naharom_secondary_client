@@ -1,16 +1,18 @@
-import React from 'react';
-import { Box, InputBase, Stack, Typography } from '@mui/material';
+import React, { useState } from 'react';
+import { Box, Stack, Typography } from '@mui/material';
 import Dialog, { dialogClasses } from '@mui/material/Dialog';
 import PropTypes from 'prop-types';
 import { useTheme } from '@emotion/react';
 import Label from '../label';
 
-function CustomDialog({ openFlag, setonClose, placeHolder, component, maxWidth }) {
+function CustomDialog({ openFlag, setonClose, placeHolder, component, maxWidth, mt }) {
   const theme = useTheme();
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleClose = () => {
-    // Your close logic here
-    setonClose();
+    if (!isSubmitting) {
+      setonClose();
+    }
   };
 
   return (
@@ -25,8 +27,10 @@ function CustomDialog({ openFlag, setonClose, placeHolder, component, maxWidth }
       }}
       PaperProps={{
         sx: {
-          mt: 3,
-          overflow: 'unset',
+          mt: mt ?? 3,
+          maxHeight: '90vh',
+          display: 'flex',
+          flexDirection: 'column',
         },
       }}
       sx={{
@@ -40,13 +44,28 @@ function CustomDialog({ openFlag, setonClose, placeHolder, component, maxWidth }
           <Typography sx={{ letterSpacing: 1, color: 'text.primary', fontWeight: 'bold' }}>
             {placeHolder}
           </Typography>
-          {/* Close icon */}
-          <Label onClick={handleClose} sx={{ cursor: 'pointer', fontSize: 20 }}>
+          <Label
+            onClick={handleClose}
+            sx={{
+              cursor: isSubmitting ? 'not-allowed' : 'pointer',
+              fontSize: 20,
+              opacity: isSubmitting ? 0.5 : 1,
+            }}
+          >
             &#10005;
           </Label>
         </Stack>
       </Box>
-      <Stack sx={{ p: 3, pt: 2, height: 'auto', width: '100%' }}>{component}</Stack>
+      <Box
+        sx={{
+          flexGrow: 1,
+          overflow: 'auto',
+          p: 3,
+          pt: 2,
+        }}
+      >
+        {React.cloneElement(component, { onClose: setonClose, setIsSubmitting })}
+      </Box>
     </Dialog>
   );
 }
@@ -55,7 +74,9 @@ CustomDialog.propTypes = {
   openFlag: PropTypes.bool,
   setonClose: PropTypes.func,
   placeHolder: PropTypes.string,
-  component: PropTypes.any,
+  component: PropTypes.element,
+  mt: PropTypes.number,
   maxWidth: PropTypes.oneOf(['xl', 'xs', 'lg', 'md', 'sm']),
 };
+
 export default CustomDialog;

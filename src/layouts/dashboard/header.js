@@ -24,6 +24,7 @@ import {
   ContactsPopover,
   NotificationsPopover,
 } from '../_common';
+import LedgerPopover from '../_common/ledger-popover';
 
 // ----------------------------------------------------------------------
 
@@ -68,6 +69,7 @@ export default function Header({ onOpenNav }) {
         {/* <ContactsPopover /> */}
 
         <SettingsButton />
+        <LedgerPopover />
 
         <AccountPopover />
       </Stack>

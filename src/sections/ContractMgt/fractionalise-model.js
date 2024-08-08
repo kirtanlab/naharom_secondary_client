@@ -53,7 +53,7 @@ function FractionalizeModel({ row, onClose }) {
     return [year, month, day].join('-');
   };
 
-  const buyIrrSchema = Yup.object().shape({
+  const fractionaliseSchema = Yup.object().shape({
     primary_invoice_id: Yup.number().required('Invoice ID is required'),
     no_of_units: Yup.number().integer().positive().required('Number of units is required'),
     per_unit_price: Yup.number().positive().required('Per unit price is required'),
@@ -102,7 +102,7 @@ function FractionalizeModel({ row, onClose }) {
     };
   }, [row]);
   const methods = useForm({
-    resolver: yupResolver(buyIrrSchema),
+    resolver: yupResolver(fractionaliseSchema),
     defaultValues,
   });
 
@@ -167,7 +167,7 @@ function FractionalizeModel({ row, onClose }) {
       };
       console.log('finalObj', finalObj);
       const resData = await postInvoice.mutateAsync(finalObj);
-      if (resData) {
+      if (resData && !postInvoice.isLoading) {
         console.log('resData: ', resData);
         enqueueSnackbar(`Invoice Posted Successfully`, {
           variant: 'success',

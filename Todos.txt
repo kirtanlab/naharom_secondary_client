@@ -1,0 +1,29 @@
+For buyer/seller: 
+
+    • Invoices will be there with  all details regarding it : Done
+    • wallet: user can fund or withdraw from wallet, 3rd party APIs will be integrated :
+    • KYC process, 3rd party APIs will be integrated :
+    • Buyer can buy:
+    • fund/ do IRR calculation (as per figma and SDLC) :
+    • Seller (Admin only) can post invoice for sell (Fixed rate only) :
+
+For admin: 
+
+    • Reports :
+    • Dashboard:
+    • Ledger:
+    • User Management:
+    • Loan List View / Product Management:
+
+ ---------------------------------------------
+    • Contract Management : excluded
+    • Trading Limits: Excluded
+
+
+TuesDay: Buy,Sell ,Ledger admin and user
+Wed: Registration, IRR integration for only fixed price loans, Reports,
+Thursday:Wallet,Bank accounts Aggreation
+Friday: Final review and meeting with Pranav and asking for payment
+Saturday: Final touches if required and code delivery
+
+IRR Calc and Cashflows will be generated in frontend only

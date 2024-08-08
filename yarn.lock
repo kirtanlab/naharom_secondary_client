@@ -3111,10 +3111,10 @@
     prop-types "^15.8.1"
     react-is "^18.3.1"
 
-"@mui/x-data-grid@^6.10.0":
-  version "6.20.1"
-  resolved "https://registry.npmjs.org/@mui/x-data-grid/-/x-data-grid-6.20.1.tgz"
-  integrity sha512-x1muWWIG9otkk4FuvoTxH3I4foyA1caFu8ZC9TvMQ+7NSBKcfy/JeLQfKkZk8ACUUosvENdrRIkhqU2xdIqIVg==
+"@mui/x-data-grid@^6.20.4":
+  version "6.20.4"
+  resolved "https://registry.npmjs.org/@mui/x-data-grid/-/x-data-grid-6.20.4.tgz"
+  integrity sha512-I0JhinVV4e25hD2dB+R6biPBtpGeFrXf8RwlMPQbr9gUggPmPmNtWKo8Kk2PtBBMlGtdMAgHWe7PqhmucUxU1w==
   dependencies:
     "@babel/runtime" "^7.23.2"
     "@mui/utils" "^5.14.16"

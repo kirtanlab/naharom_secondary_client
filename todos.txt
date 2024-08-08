@@ -1,8 +1,0 @@
-1) Animated  progress for buying/selling
-
-https://icon-sets.iconify.design/ep/edit/
-https://mui.com/material-ui/material-icons/?theme=Outlined&query=pencil
-https://github.com/kirtanlab/naharom_secondary_client/tree/master/src
-https://github.com/insiyapithapur/NaharOmBackend
-
-

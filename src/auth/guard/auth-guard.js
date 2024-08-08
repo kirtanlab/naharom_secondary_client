@@ -44,7 +44,7 @@ export default function AuthGuard({ children }) {
       const decodedPath = decodeURIComponent(window.location.pathname ?? paths.dashboard.root);
       console.log('Redirecting to:', decodedPath);
 
-      router.replace(decodedPath);
+      router.replace(paths.dashboard.root);
       setChecked(true);
     }
     // } else if (authenticated && !isBank) {

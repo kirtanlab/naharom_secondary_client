@@ -22,7 +22,7 @@ const TABLE_HEAD_FRACTIONALIZED = [
   { id: 'interest', label: 'Interest Rate', align: 'center' },
   { id: 'from_date', label: 'Sale Start Date', align: 'center', width: 20 },
   { id: 'to_date', label: 'Sale End Date', align: 'center' },
-  { id: 'actions', label: 'Actions', disableSort: true },
+  { id: 'actions_fractionalized', label: 'Actions', disableSort: true },
 ];
 const TABLE_HEAD_NON_FRACTIONALIZED = [
   { id: 'primary_invoice_id', label: 'Invoice id', align: 'center' },
@@ -34,7 +34,7 @@ const TABLE_HEAD_NON_FRACTIONALIZED = [
   { id: 'interest_rate', label: 'Interest Rate', align: 'center' },
   { id: 'irr', label: 'IRR', align: 'center' },
   { id: 'xirr', label: 'XIRR', align: 'center' },
-  { id: 'actions', label: 'Actions', disableSort: true },
+  { id: 'actions_nonFractionalized', label: 'Actions', disableSort: true },
 ];
 
 export default function ContractMgtView() {

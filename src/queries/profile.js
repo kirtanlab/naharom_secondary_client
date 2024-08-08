@@ -3,8 +3,9 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { HOST_ADDRESS } from './host';
 //
 
-export const useGetIndividualDetails = (userId, timeoutMs = 10000) =>
-  useQuery(
+export const useGetIndividualDetails = ({ userId, timeoutMs = 10000 }) => {
+  console.log('userId in Individual Profile', userId);
+  return useQuery(
     ['IndividualProfile', userId],
     async () => {
       const source = axios.CancelToken.source();
@@ -44,6 +45,7 @@ export const useGetIndividualDetails = (userId, timeoutMs = 10000) =>
       enabled: !!userId,
     }
   );
+};
 
 export const useSubmitProfile = (timeoutMs = 10000) =>
   useMutation(async (data) => {
@@ -53,7 +55,7 @@ export const useSubmitProfile = (timeoutMs = 10000) =>
     }, timeoutMs);
 
     try {
-      const response = await axios.post(`${HOST_ADDRESS}/submitProfile/`, data, {
+      const response = await axios.post(`${HOST_ADDRESS}/Profile/`, data, {
         cancelToken: source.token,
       });
       clearTimeout(timeoutId);
