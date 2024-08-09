@@ -1,4 +1,4 @@
-import { fDate } from 'src/utils/format-time';
+import { fDate, fDateTime } from 'src/utils/format-time';
 import PropTypes from 'prop-types';
 import Iconify from 'src/components/iconify';
 import CustomPopover from 'src/components/custom-popover/custom-popover';
@@ -198,7 +198,7 @@ function renderCellContent({ columnId, row }) {
       return (
         <TableCell>
           <ListItemText
-            primary={row?.time_date ? row.time_date : '--'}
+            primary={row?.time_date ? fDateTime(row.time_date) : '--'}
             primaryTypographyProps={{ typography: 'body2', noWrap: true }}
             secondaryTypographyProps={{
               mt: 0.5,

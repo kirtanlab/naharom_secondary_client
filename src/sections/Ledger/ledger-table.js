@@ -129,7 +129,8 @@ export default function LedgerTable({ TABLE_HEAD, tableData }) {
           <Scrollbar>
             <Table>
               <TableHeadCustom
-                headLabel={TABLE_HEAD}
+                // headLabel={TABLE_HEAD}
+                headLabel={TABLE_HEAD.filter((column) => visibleColumns[column.id])}
                 order={table.order}
                 orderBy={table.orderBy}
                 rowCount={dataFiltered.length}
