@@ -10,7 +10,7 @@ import LedgerTable from './ledger-table';
 
 //
 const TABLE_HEAD = [
-  { id: 'transaction_id', label: 'Transaction Id' },
+  { id: 'transaction_id', label: 'Transaction Id', align: 'center' },
   { id: 'type', label: 'Type' },
   { id: 'creditedAmount', label: 'Credited Amount' },
   { id: 'debitedAmount', label: 'Debited Amount' },

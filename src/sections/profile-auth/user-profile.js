@@ -21,23 +21,17 @@ import { LoadingScreen } from 'src/components/loading-screen';
 import { InputAdornment, TextField } from '@mui/material';
 import { useAuthContext } from 'src/auth/hooks';
 
-export default function UserForm() {
+const UserForm = ({ currentUser }) => {
   console.log('UserForm Entered');
   // const { userId } = getSession();
-  const { initialize, user: userId } = useAuthContext();
+  const { initialize, isKYC, user: userId } = useAuthContext();
   // console.log('userId: ', userId);
 
-  const {
-    data: fetchCurrentUser,
-    error: IndividualError,
-    isError: IndividualIsError,
-    isSuccess: IndividualIsSuccess,
-    isLoading: IndividualIsLoading,
-  } = useGetIndividualDetails({ userId });
+  // console.log('fetchCurrentUser: ', fetchCurrentUser);
 
   const [isEditable, setIsEditable] = useState(false);
   const [lightEditable, setLightEditable] = useState(true);
-  const [currentUser, setCurrentUser] = useState(fetchCurrentUser ?? null);
+  // const [currentUser, setCurrentUser] = useState(currentUser ?? null);
   const { enqueueSnackbar } = useSnackbar();
 
   const mdUp = useResponsive('up', 'md');
@@ -68,17 +62,17 @@ export default function UserForm() {
 
   const defaultValues = useMemo(
     () => ({
-      first_name: currentUser?.prefillData?.firstName || '',
-      last_name: currentUser?.prefillData?.lastName || '',
-      addressOne: currentUser?.prefillData?.address1?.Address || '',
-      addressTwo: '',
-      state: currentUser?.prefillData?.address1?.state || '',
-      city: currentUser?.prefillData?.city || '',
-      zipCode: currentUser?.prefillData?.address1?.Postal || '',
+      first_name: currentUser?.profile?.first_name || '',
+      last_name: currentUser?.profile?.last_name || '',
+      addressOne: currentUser?.profile?.addressLine1 || '',
+      addressTwo: currentUser?.profile?.addressLine2 || '',
+      state: currentUser?.profile?.state || '',
+      city: currentUser?.profile?.city || '',
+      zipCode: currentUser?.profile?.pin_code || '',
       // phoneNumber: fetchCurrentUser?.phoneNumber || '',
-      alternatePhone: currentUser?.prefillData?.alternatePhone || '',
-      email: currentUser?.prefillData?.email || '',
-      pan: currentUser?.prefillData?.panCardNumber || '',
+      alternatePhone: currentUser?.profile?.alternate_phone_no || '',
+      email: currentUser?.user?.email || '',
+      pan: currentUser?.user?.pan_no || '',
     }),
     [currentUser]
   );
@@ -100,24 +94,24 @@ export default function UserForm() {
   const values = watch();
   console.log('errors for submitssion: ', errors);
   useEffect(() => {
-    if (!IndividualIsLoading) enqueueSnackbar('Successfully logged in');
+    if (!isKYC) enqueueSnackbar('Successfully logged in');
 
-    if (currentUser?.prefillData == null) {
+    if (currentUser?.prefillData == null && !isKYC) {
       setIsEditable(true);
       setLightEditable(false);
     }
-    if (currentUser?.prefillData != null) {
+    if (currentUser?.prefillData != null && !isKYC) {
       setLightEditable(true);
 
       setIsEditable(false);
     }
-  }, [enqueueSnackbar, IndividualIsLoading, currentUser]);
+  }, [enqueueSnackbar, currentUser, isKYC]);
 
-  if (IndividualIsLoading || submitProfile.isLoading) {
+  if (submitProfile.isLoading) {
     return <LoadingScreen />;
   }
-  if (IndividualIsError || submitProfile.isError) {
-    console.log('Error: ', IndividualError, submitProfile.error);
+  if (submitProfile.isError) {
+    console.log('Error: ', submitProfile.error);
   }
   const onSubmit = handleSubmit(async (data) => {
     console.log('data: ', data);
@@ -276,4 +270,10 @@ export default function UserForm() {
       </Grid>
     </FormProvider>
   );
-}
+};
+
+UserForm.propTypes = {
+  currentUser: PropTypes.array,
+};
+
+export default UserForm;

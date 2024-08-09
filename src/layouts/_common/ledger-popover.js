@@ -25,7 +25,7 @@ import { WalletOutlined, WalletRounded, WalletSharp, WalletTwoTone } from '@mui/
 export default function LedgerPopover() {
   const router = useRouter();
 
-  const { logout, user, phoneNumber, user_role } = useAuthContext();
+  const { logout, user, phoneNumber, user_role, balance } = useAuthContext();
   console.log('phoneNumber: ', phoneNumber, user_role, user);
   const popover = usePopover();
   const ledgerPopover = usePopover();
@@ -90,7 +90,7 @@ export default function LedgerPopover() {
       >
         <Box sx={{ p: 2, pb: 1.5 }}>
           <Typography variant="subtitle2" noWrap>
-            Balance: 1231 &#x20b9;
+            Balance: {balance} &#x20b9;
           </Typography>
         </Box>
 
@@ -108,14 +108,24 @@ export default function LedgerPopover() {
 
         <MenuItem
           onClick={handleLogout}
-          sx={{ m: 1, fontWeight: 'fontWeightBold', color: 'error.main' }}
+          sx={{
+            m: 1,
+            fontWeight: 'fontWeightBold',
+            color: 'error.main',
+            textDecoration: 'underline',
+          }}
         >
           Withdraw Money
         </MenuItem>
         <Divider sx={{ borderStyle: 'solid ' }} />
         <MenuItem
           onClick={handleLogout}
-          sx={{ m: 1, fontWeight: 'fontWeightBold', color: 'error.main' }}
+          sx={{
+            m: 1,
+            fontWeight: 'fontWeightBold',
+            color: 'error.main',
+            textDecoration: 'underline',
+          }}
         >
           Credit Money
         </MenuItem>
