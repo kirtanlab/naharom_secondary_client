@@ -88,7 +88,7 @@ export default function LedgerView() {
       </>
     );
   }
-  console.log('AllInvoiceDataTest: ', AllUsers);
+  // console.log('AllInvoiceDataTest: ', AllUsers);
   return (
     <Container maxWidth={settings.themeStretch ? false : 'xl'}>
       <Typography variant="h4"> Ledger </Typography>

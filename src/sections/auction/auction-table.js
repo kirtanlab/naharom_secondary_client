@@ -31,6 +31,9 @@ import {
   TableBody,
   Table,
   Divider,
+  Checkbox,
+  FormControlLabel,
+  FormGroup
 } from '@mui/material';
 import PropTypes from 'prop-types';
 import { fDate } from 'src/utils/format-time';
@@ -148,6 +151,12 @@ export default function AuctionTable({
   const confirm = useBoolean();
 
   const [filters, setFilters] = useState(defaultFilters);
+  const [visibleColumns, setVisibleColumns] = useState(
+    TABLE_HEAD_BUY.reduce((acc, column) => {
+      acc[column.id] = true;
+      return acc;
+    }, {})
+  );
   const [currentLabels, setCurrentLabels] = useState(TABLE_HEAD_BUY);
   const dateError =
     filters.startDate && filters.endDate
@@ -169,6 +178,9 @@ export default function AuctionTable({
     !!filters.uniqueId || filters.type !== 'all' || (!!filters.startDate && !!filters.endDate);
   const notFound = (!dataFiltered.length && canReset) || !dataFiltered.length;
   const getInvoiceLength = (type) => tableData.filter((item) => item.type === type).length;
+
+
+
   const TABS = [
     // { value: 'all', label: 'All', color: 'default', count: tableData.length },
     {
@@ -201,6 +213,23 @@ export default function AuctionTable({
     },
     [table]
   );
+
+  const handleFilterType = useCallback(
+    (event, newValue) => {
+      handleFilters('type', newValue);
+      // Reset visible columns when switching between fractionalized and non-fractionalized
+      const newTableHead =
+        newValue === 'CanBuy' ? TABLE_HEAD_BUY : TABLE_HEAD_SELL;
+      setVisibleColumns(
+        newTableHead.reduce((acc, column) => {
+          acc[column.id] = true;
+          return acc;
+        }, {})
+      );
+    },
+    [handleFilters, TABLE_HEAD_BUY, TABLE_HEAD_SELL]
+  );
+
   const handleFilterStatus = useCallback(
     (event, newValue) => {
       handleFilters('type', newValue);
@@ -226,6 +255,15 @@ export default function AuctionTable({
   // const handleResetFilters = useCallback(() => {
   //   setFilters(defaultFilters);
   // }, [defaultFilters]);
+  const handleToggleColumn = (columnId) => {
+    setVisibleColumns((prev) => ({
+      ...prev,
+      [columnId]: !prev[columnId],
+    }));
+  };
+
+  const currentTableHead =
+    filters.type === 'CanBuy' ? TABLE_HEAD_BUY : TABLE_HEAD_SELL;
 
   return (
     <Card
@@ -249,7 +287,7 @@ export default function AuctionTable({
       >
         <Tabs
           value={filters.type}
-          onChange={handleFilterStatus}
+          onChange={handleFilterType}
           sx={{
             px: 2,
             boxShadow: `inset 0 -2px 0 0 ${alpha(theme.palette.grey[500], 0.08)}`,
@@ -300,24 +338,38 @@ export default function AuctionTable({
           Add Invoice
         </Button> */}
       </Grid>
+      <FormGroup row sx={{ p: 2 }}>
+        {currentTableHead.map((column) => (
+          <FormControlLabel
+            key={column.id}
+            control={
+              <Checkbox
+                checked={visibleColumns[column.id]}
+                onChange={() => handleToggleColumn(column.id)}
+              />
+            }
+            label={column.label}
+          />
+        ))}
+      </FormGroup>
       <Grid>
         <TableContainer sx={{ position: 'relative', overflow: 'unset' }}>
           {/* <TableSelectedAction /> */}
           <Scrollbar>
             <Table>
               <TableHeadCustom
-                headLabel={currentLabels}
+                headLabel={currentTableHead.filter((column) => visibleColumns[column.id])}
                 order={table.order}
                 orderBy={table.orderBy}
                 rowCount={dataFiltered.length}
                 numSelected={table.selected.length}
                 onSort={table.onSort}
-                // onSelectAllRows={(checked) => /**to show box */
-                //   table.onSelectAllRows(
-                //     checked,
-                //     dataFiltered.map((row) => row.id)
-                //   )
-                // }
+              // onSelectAllRows={(checked) => /**to show box */
+              //   table.onSelectAllRows(
+              //     checked,
+              //     dataFiltered.map((row) => row.id)
+              //   )
+              // }
               />
               <TableBody>
                 {dataFiltered
@@ -353,7 +405,7 @@ export default function AuctionTable({
           // dense={table.dense}
           onPageChange={table.onChangePage}
           onRowsPerPageChange={table.onChangeRowsPerPage}
-          // onChangeDense={table.onChangeDense}
+        // onChangeDense={table.onChangeDense}
         />
       </Grid>
     </Card>

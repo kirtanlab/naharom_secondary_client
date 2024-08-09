@@ -15,6 +15,7 @@ const ContractMgt = lazy(() => import('src/pages/dashboard/invoices-admin'));
 const UsersMgt = lazy(() => import('src/pages/dashboard/usersMgt-admin'));
 const Profile = lazy(() => import('src/pages/dashboard/profile'));
 const Ledger = lazy(() => import('src/pages/dashboard/user-ledger'));
+const AdminLedger = lazy(() => import('src/pages/dashboard/admin-ledger'));
 // ----------------------------------------------------------------------
 
 export const dashboardRoutes = [
@@ -36,6 +37,7 @@ export const dashboardRoutes = [
       { path: 'UsersMgt', element: <UsersMgt /> },
       { path: 'Profile', element: <Profile /> },
       { path: 'UserLedger', element: <Ledger /> },
+      { path: 'AdminLedger', element: <AdminLedger /> },
     ],
   },
 ];

@@ -32,5 +32,6 @@ export const paths = {
     UsersMgt: `${ROOTS.DASHBOARD}/UsersMgt`,
     Profile: `${ROOTS.DASHBOARD}/Profile`,
     UserLedger: `${ROOTS.DASHBOARD}/UserLedger`,
+    AdminLedger: `${ROOTS.DASHBOARD}/AdminLedger`,
   },
 };

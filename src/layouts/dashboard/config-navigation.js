@@ -65,6 +65,11 @@ export function useNavData() {
             path: paths.dashboard.UserLedger,
             icon: ICONS.ecommerce,
           },
+          {
+            title: 'AdminLedger',
+            path: paths.dashboard.AdminLedger,
+            icon: ICONS.ecommerce,
+          },
         ],
       },
     ],
