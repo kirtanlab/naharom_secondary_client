@@ -167,7 +167,7 @@ function FractionalizeModel({ row, onClose }) {
       };
       console.log('finalObj', finalObj);
       const resData = await postInvoice.mutateAsync(finalObj);
-      if (resData && !postInvoice.isLoading) {
+      if (resData) {
         console.log('resData: ', resData);
         enqueueSnackbar(`Invoice Posted Successfully`, {
           variant: 'success',

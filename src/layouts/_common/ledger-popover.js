@@ -15,18 +15,25 @@ import { useMockedUser } from 'src/hooks/use-mocked-user';
 // auth
 import { useAuthContext } from 'src/auth/hooks';
 // components
+import { fNumber } from 'src/utils/format-number';
 import { varHover } from 'src/components/animate';
 import CustomPopover, { usePopover } from 'src/components/custom-popover';
 import Iconify from 'src/components/iconify';
 import { WalletOutlined, WalletRounded, WalletSharp, WalletTwoTone } from '@mui/icons-material';
+import CustomDialog from 'src/components/Dialog/dialog';
+import { useState } from 'react';
+import WithdrawModel from './withdraw';
+import CreditMModel from './credit';
 
 // ----------------------------------------------------------------------
 
 export default function LedgerPopover() {
   const router = useRouter();
+  const [withdraw, setWithdraw] = useState(false);
+  const [credit, setCredit] = useState(false);
 
   const { logout, user, phoneNumber, user_role, balance } = useAuthContext();
-  console.log('phoneNumber: ', phoneNumber, user_role, user);
+  console.log('phoneNumber: ', phoneNumber, user_role, user, balance);
   const popover = usePopover();
   const ledgerPopover = usePopover();
   const handleLogout = async () => {
@@ -86,11 +93,11 @@ export default function LedgerPopover() {
       <CustomPopover
         open={ledgerPopover.open}
         onClose={ledgerPopover.onClose}
-        sx={{ width: 140, p: 0 }}
+        sx={{ minWidth: 130, maxWidth: 220, p: 0 }}
       >
         <Box sx={{ p: 2, pb: 1.5 }}>
           <Typography variant="subtitle2" noWrap>
-            Balance: {balance} &#x20b9;
+            Balance: &#x20b9; {fNumber(balance)}
           </Typography>
         </Box>
 
@@ -107,7 +114,7 @@ export default function LedgerPopover() {
         {/* <Divider sx={{ borderStyle: 'dashed' }} /> */}
 
         <MenuItem
-          onClick={handleLogout}
+          onClick={() => setWithdraw(true)}
           sx={{
             m: 1,
             fontWeight: 'fontWeightBold',
@@ -119,7 +126,7 @@ export default function LedgerPopover() {
         </MenuItem>
         <Divider sx={{ borderStyle: 'solid ' }} />
         <MenuItem
-          onClick={handleLogout}
+          onClick={() => setCredit(true)}
           sx={{
             m: 1,
             fontWeight: 'fontWeightBold',
@@ -130,6 +137,18 @@ export default function LedgerPopover() {
           Credit Money
         </MenuItem>
       </CustomPopover>
+      <CustomDialog
+        placeHolder="Withdraw Money"
+        component={<WithdrawModel onClose={() => setWithdraw(false)} />}
+        openFlag={withdraw}
+        setonClose={() => setWithdraw(false)}
+      />
+      <CustomDialog
+        placeHolder="Credit Money"
+        component={<CreditMModel onClose={() => setCredit(false)} />}
+        openFlag={credit}
+        setonClose={() => setCredit(false)}
+      />
     </>
   );
 }

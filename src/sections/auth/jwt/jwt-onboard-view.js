@@ -129,7 +129,7 @@ export default function JwtOnboard() {
           state: {
             loginType: data.loginType,
             mobileNumber: data.mobileNumber,
-            refId: res_data.result.referenceId,
+            refId: res_data.result.result.referenceId,
           },
         });
       }

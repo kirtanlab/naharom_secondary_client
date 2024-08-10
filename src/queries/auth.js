@@ -28,7 +28,7 @@ export const useGenerateOTP = (timeoutMs = 10000) => {
   return mutation;
 };
 
-export const useVerifyOTP = (timeoutMs = 10000) => {
+export const useVerifyOTP = (timeoutMs = 60000) => {
   const mutation = useMutation(async (data) => {
     const source = axios.CancelToken.source();
     const timeoutId = setTimeout(() => {

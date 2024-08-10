@@ -67,3 +67,68 @@ export const useGetAdminLedger = ({ userId, timeoutMs = 10000 }) =>
       staleTime: 0, // Consider data stale immediately
     }
   );
+
+export const useCreditFunds = ({ userId, timeoutMs = 10000 }) => {
+  const queryClient = useQueryClient();
+  const mutation = useMutation(
+    async (data) => {
+      const source = axios.CancelToken.source();
+      const timeoutId = setTimeout(() => {
+        source.cancel('Request timed out');
+      }, timeoutMs);
+      try {
+        const response = await axios.post(`${HOST_ADDRESS}/Credit_Funds/`, data, {
+          cancelToken: source.token,
+        });
+        clearTimeout(timeoutId);
+        return response.data;
+      } catch (error) {
+        console.log('error,', error);
+        clearTimeout(timeoutId);
+        if (axios.isCancel(error)) {
+          throw new Error('Request timed out');
+        }
+        throw error;
+      }
+    },
+    {
+      onSuccess: () => {
+        // Invalidate the specific query
+        // queryClient.invalidateQueries(['AllInvoicesById', userId]);
+      },
+    }
+  );
+  return mutation;
+};
+export const useWithdrawFunds = ({ userId, timeoutMs = 10000 }) => {
+  const queryClient = useQueryClient();
+  const mutation = useMutation(
+    async (data) => {
+      const source = axios.CancelToken.source();
+      const timeoutId = setTimeout(() => {
+        source.cancel('Request timed out');
+      }, timeoutMs);
+      try {
+        const response = await axios.post(`${HOST_ADDRESS}/Withdraw_Funds/`, data, {
+          cancelToken: source.token,
+        });
+        clearTimeout(timeoutId);
+        return response.data;
+      } catch (error) {
+        console.log('error,', error);
+        clearTimeout(timeoutId);
+        if (axios.isCancel(error)) {
+          throw new Error('Request timed out');
+        }
+        throw error;
+      }
+    },
+    {
+      onSuccess: () => {
+        // Invalidate the specific query
+        // queryClient.invalidateQueries(['AllInvoicesById', userId]);
+      },
+    }
+  );
+  return mutation;
+};

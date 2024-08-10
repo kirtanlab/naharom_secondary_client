@@ -93,7 +93,7 @@ export function AuthProvider({ children }) {
             phoneNumber: phone,
             is_admin,
             is_superAdmin,
-            balance: OutstandingBalance,
+            balance: OutstandingBalance || 0,
           },
         });
       } else {
@@ -117,6 +117,8 @@ export function AuthProvider({ children }) {
 
   const testDemo = useCallback(async (userId) => {
     setLocalSession({ userId });
+    const response = await getStatus(userId);
+    console.log('response: testDemo', response);
     dispatch({
       type: 'INITIAL',
       payload: {
@@ -125,6 +127,9 @@ export function AuthProvider({ children }) {
         isBank: true,
         user_role: 'Individual',
         phoneNumber: '9016222140',
+        balance: response.OutstandingBalance,
+        is_admin: response.is_admin,
+        is_superAdmin: response.is_super_admin,
       },
     });
   }, []);
@@ -228,6 +233,7 @@ export function AuthProvider({ children }) {
       // register,
       logout,
       initialize,
+      balance: state.balance,
     }),
     [
       state.phoneNumber,
@@ -239,6 +245,7 @@ export function AuthProvider({ children }) {
       state.isKYC,
       state.isBank,
       state.user_role,
+      state.balance,
     ]
   );
 

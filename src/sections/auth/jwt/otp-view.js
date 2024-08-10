@@ -69,7 +69,7 @@ const OTPVerification = () => {
     // Add your OTP verification logic here
     try {
       const otpString = data.otp.join('');
-      console.log('Submitted OTP:', otpString);
+
       const final_data = {
         countryCode: '91',
         mobileNumber,
@@ -78,6 +78,7 @@ const OTPVerification = () => {
         otp: otpString,
         extraFields: false,
       };
+      console.log('Submitted OTP:', final_data);
       const res_data = await verifyOTP.mutateAsync(final_data);
       console.log('Verified OTP:', res_data);
       if (res_data) {

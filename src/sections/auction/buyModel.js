@@ -24,6 +24,8 @@ import { useSnackbar } from 'notistack';
 import { addDays } from 'date-fns'; // Make sure to import this
 import { useAuthContext } from 'src/auth/hooks';
 import { useBuyInvoice } from 'src/queries/auction';
+import { calculateInvestmentDetails } from 'src/utils/calc_xirr';
+import moment from 'moment';
 
 //
 const { yupResolver } = require('@hookform/resolvers/yup');
@@ -83,6 +85,34 @@ function BuyModel({ row, onClose }) {
     formState: { isSubmitting, isDirty, dirtyFields, errors },
   } = methods;
 
+  const buyNoOfUnits = watch('buy_no_of_units');
+  useEffect(() => {
+    console.log('row: ', row);
+    const disbursedDate = moment('2024-06-01', 'YYYY-MM-DD');
+    const firstPaymentDate = moment('2024-07-01', 'YYYY-MM-DD');
+    const paymentFrequency = 'MONTHLY';
+    console.log(
+      ' row.buy_price_per_unit * buyNoOfUnits,',
+      row.Invoice_per_unit_price,
+      buyNoOfUnits
+    );
+    if (buyNoOfUnits) {
+      // Call the calculateInvestmentDetails function
+      const result = calculateInvestmentDetails(
+        row.Invoice_total_price, // loanAmount
+        row.Invoice_no_of_units, // numFractions
+        row.Invoice_interest / 100, // annualInterestRate (convert percentage to decimal)
+        row.Invoice_tenure_in_days / 365, // loanPeriodYears
+        buyNoOfUnits, // unitsBought
+        moment(row?.Invoice_disbursement_date || disbursedDate), // disbursedDate
+        moment(row?.Invoice_first_payment_date || firstPaymentDate), // firstPaymentDate
+        row?.payment_frequency?.toUpperCase() || paymentFrequency // paymentFrequency
+      );
+
+      // Set the calculated XIRR value
+      setValue('xirr', result.xirr.toFixed(2));
+    }
+  }, [buyNoOfUnits, row, setValue]);
   const onSubmit = handleSubmit(async (data) => {
     try {
       console.log('data onSubmit: ', data);
